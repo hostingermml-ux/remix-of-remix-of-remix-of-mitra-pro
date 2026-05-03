@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* ===== Teal Palette =====
+       #066A67 Primary  | #024644 Dark | #457B79 Cadet
+       #90C1BE Light    | #C2E1DF Pale | #F5FAFA Soft White
+       #1F2937 Text     | #6B7280 Muted */
+    --background: 180 29% 97%;
+    --foreground: 217 19% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 217 19% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 19% 17%;
+
+    /* Brand-* aliases retained for backward compatibility (mapped to teal) */
+    --brand-1: 178 89% 22%;   /* primary teal */
+    --brand-2: 178 28% 38%;   /* cadet */
+    --brand-3: 176 28% 66%;   /* light */
+
+    --teal-primary: 178 89% 22%;
+    --teal-dark: 178 94% 14%;
+    --teal-cadet: 178 28% 38%;
+    --teal-light: 176 28% 66%;
+    --teal-pale: 176 34% 82%;
+    --teal-soft: 180 29% 97%;
+
+    --primary: 178 89% 22%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 176 34% 92%;
+    --secondary-foreground: 178 89% 22%;
+
+    --muted: 176 34% 94%;
+    --muted-foreground: 218 11% 46%;
+
+    --accent: 176 34% 88%;
+    --accent-foreground: 178 89% 22%;
+
+    --destructive: 178 94% 14%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 178 89% 22%;
+    --warning: 178 28% 38%;
+    --info: 178 89% 22%;
+
+    --border: 176 28% 80%;
+    --input: 176 28% 85%;
+    --ring: 178 89% 22%;
+
+    --radius: 0.9rem;
+
+    --gradient-brand: linear-gradient(135deg, hsl(var(--teal-primary)), hsl(var(--teal-cadet)) 60%, hsl(var(--teal-light)));
+    --gradient-soft: linear-gradient(135deg, #90C1BE 0%, #C2E1DF 55%, #F5FAFA 100%);
+    --gradient-premium: radial-gradient(circle at top left, #90C1BE 0%, #C2E1DF 45%, #F5FAFA 100%);
+    --gradient-bg-page: linear-gradient(135deg, #90C1BE 0%, #C2E1DF 55%, #F5FAFA 100%);
+
+    --glass-bg: hsla(0, 0%, 100%, 0.55);
+    --glass-border: hsla(0, 0%, 100%, 0.45);
+    --shadow-glass: 0 8px 32px hsl(178 89% 22% / 0.12);
+    --shadow-soft: 0 4px 20px hsl(178 89% 22% / 0.08);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 217 19% 17%;
+    --sidebar-primary: 178 89% 22%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 176 34% 92%;
+    --sidebar-accent-foreground: 178 89% 22%;
+    --sidebar-border: 176 28% 85%;
+    --sidebar-ring: 178 89% 22%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body, #root { @apply min-h-screen; }
+  body {
+    @apply text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    background: var(--gradient-bg-page);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4, h5, .font-display {
+    font-family: 'Josefin Sans', 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+  }
+  h1 { @apply text-2xl font-semibold tracking-tight; }
+  h2 { @apply text-xl font-semibold tracking-tight; }
+  h3 { @apply text-base font-semibold; }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: var(--shadow-glass);
+  }
+  .glass-soft {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-soft);
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 12px 40px hsl(178 89% 22% / 0.14);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #024644, #066A67 50%, #457B79);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .gradient-bg { background: var(--gradient-brand); }
+  .gradient-soft-bg { background: var(--gradient-soft); }
+  .gradient-premium-bg { background: var(--gradient-premium); }
+
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: var(--gradient-premium);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: var(--shadow-glass);
+  }
+  .page-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(600px 200px at 90% 110%, rgba(6,106,103,0.18), transparent 60%);
+    pointer-events: none;
+  }
+}
