@@ -8,7 +8,7 @@ export default {
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
     extend: {
       fontFamily: {
-        display: ['"Josefin Sans"', "Inter", "sans-serif"],
+        display: ['Montserrat', 'Inter', "sans-serif"],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
@@ -28,7 +28,14 @@ export default {
           1: "hsl(var(--brand-1))",
           2: "hsl(var(--brand-2))",
           3: "hsl(var(--brand-3))",
+          blue: "hsl(var(--brand-blue))",
+          "blue-dark": "hsl(var(--brand-blue-dark))",
+          "blue-electric": "hsl(var(--brand-blue-electric))",
+          red: "hsl(var(--brand-red))",
+          "red-dark": "hsl(var(--brand-red-dark))",
+          "red-soft": "hsl(var(--brand-red-soft))",
         },
+        /* teal-* aliases now point to the blue brand palette so existing pages re-skin automatically */
         teal: {
           primary: "hsl(var(--teal-primary))",
           dark: "hsl(var(--teal-dark))",
