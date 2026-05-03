@@ -12,7 +12,8 @@ import {
   AreaChart, Area, Legend,
 } from "recharts";
 
-const TEAL = ["#024644", "#066A67", "#457B79", "#90C1BE", "#C2E1DF"];
+const BRAND = ["#0B3FBF", "#062A80", "#144DDB", "#6B8AE8", "#B8C8F2"];
+const BRAND_RED = "#E60000";
 
 function StatCard({ label, value, icon: Icon, hint }: any) {
   return (
@@ -42,11 +43,12 @@ function ChartCard({ title, subtitle, children, className = "" }: any) {
 }
 
 const tooltipStyle = {
-  background: "rgba(255,255,255,0.95)",
-  border: "1px solid #90C1BE",
-  borderRadius: 10,
+  background: "rgba(255,255,255,0.98)",
+  border: "1px solid #E5E7EB",
+  borderRadius: 12,
   fontSize: 11,
-  color: "#1F2937",
+  color: "#111827",
+  boxShadow: "0 10px 30px rgba(11,63,191,0.12)",
 };
 
 export default function Dashboard() {
@@ -162,25 +164,30 @@ export default function Dashboard() {
 
       {/* Payment summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="page-hero p-5">
+        <div
+          className="relative overflow-hidden rounded-2xl p-5 text-white"
+          style={{ background: "linear-gradient(135deg, #062A80 0%, #0B3FBF 100%)", boxShadow: "0 18px 40px rgba(11,63,191,0.22)" }}
+        >
           <div className="relative z-10 flex items-center justify-between">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-teal-dark font-display font-semibold">Total Dibayarkan</div>
-              <div className="font-display text-2xl font-bold text-teal-dark mt-1">{fmt(paymentSummary.totalPaid)}</div>
+              <div className="text-[11px] uppercase tracking-wider text-white/75 font-display font-semibold">Total Dibayarkan</div>
+              <div className="font-display text-2xl font-bold text-white mt-1">{fmt(paymentSummary.totalPaid)}</div>
+              <div className="text-[11px] text-white/70 mt-0.5">Akumulasi pembayaran berhasil</div>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-white/70 border border-white/60 flex items-center justify-center">
-              <Wallet className="h-6 w-6 text-teal-primary" />
+            <div className="h-12 w-12 rounded-xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center">
+              <Wallet className="h-6 w-6 text-white" />
             </div>
           </div>
+          <div className="absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-brand-red/30 blur-3xl pointer-events-none" />
         </div>
-        <div className="glass rounded-2xl p-5 flex items-center justify-between">
+        <div className="glass p-5 flex items-center justify-between">
           <div>
-            <div className="text-[11px] uppercase tracking-wider text-[#6B7280] font-display font-semibold">Outstanding</div>
-            <div className="font-display text-2xl font-bold text-teal-dark mt-1">{fmt(paymentSummary.totalPending)}</div>
-            <div className="text-[11px] text-[#6B7280] mt-0.5">Menunggu / sedang diproses</div>
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-display font-semibold">Outstanding</div>
+            <div className="font-display text-2xl font-bold text-foreground mt-1">{fmt(paymentSummary.totalPending)}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">Menunggu / sedang diproses</div>
           </div>
-          <div className="h-12 w-12 rounded-xl bg-teal-pale/60 border border-teal-light/40 flex items-center justify-center">
-            <Activity className="h-6 w-6 text-teal-cadet" />
+          <div className="h-12 w-12 rounded-xl bg-brand-red-soft border border-brand-red/20 flex items-center justify-center">
+            <Activity className="h-6 w-6 text-brand-red" />
           </div>
         </div>
       </div>
@@ -195,21 +202,21 @@ export default function Dashboard() {
               <AreaChart data={trend}>
                 <defs>
                   <linearGradient id="gReports" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#066A67" stopOpacity={0.5} />
-                    <stop offset="100%" stopColor="#066A67" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#0B3FBF" stopOpacity={0.45} />
+                    <stop offset="100%" stopColor="#0B3FBF" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gPay" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#90C1BE" stopOpacity={0.6} />
-                    <stop offset="100%" stopColor="#90C1BE" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#144DDB" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#144DDB" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#C2E1DF" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis dataKey="day" stroke="#6B7280" fontSize={11} />
                 <YAxis stroke="#6B7280" fontSize={11} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ fontSize: 11, color: "#1F2937" }} />
-                <Area type="monotone" dataKey="reports" name="Laporan" stroke="#066A67" fill="url(#gReports)" strokeWidth={2} />
-                <Area type="monotone" dataKey="payments" name="Pembayaran" stroke="#457B79" fill="url(#gPay)" strokeWidth={2} />
+                <Legend wrapperStyle={{ fontSize: 11, color: "#111827" }} />
+                <Area type="monotone" dataKey="reports" name="Laporan" stroke="#0B3FBF" fill="url(#gReports)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="payments" name="Pembayaran" stroke="#144DDB" fill="url(#gPay)" strokeWidth={2.5} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -229,9 +236,12 @@ export default function Dashboard() {
                   outerRadius={80}
                   paddingAngle={3}
                 >
-                  {reportStatus.map((_, i) => (
-                    <Cell key={i} fill={TEAL[i % TEAL.length]} stroke="#FFFFFF" strokeWidth={2} />
-                  ))}
+                  {reportStatus.map((entry, i) => {
+                    const isNeg = ["DITOLAK", "REVISI", "BELUM DIBAYAR", "CANCEL"].includes(entry.name);
+                    return (
+                      <Cell key={i} fill={isNeg ? BRAND_RED : BRAND[i % BRAND.length]} stroke="#FFFFFF" strokeWidth={2} />
+                    );
+                  })}
                 </Pie>
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11, color: "#1F2937" }} />
@@ -249,13 +259,13 @@ export default function Dashboard() {
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={campaignByStatus}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#C2E1DF" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#6B7280" fontSize={11} />
                   <YAxis stroke="#6B7280" fontSize={11} allowDecimals={false} />
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(11,63,191,0.05)" }} />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                    {campaignByStatus.map((_, i) => (
-                      <Cell key={i} fill={TEAL[i % TEAL.length]} />
+                    {campaignByStatus.map((entry, i) => (
+                      <Cell key={i} fill={entry.name === "CANCEL" ? BRAND_RED : BRAND[i % BRAND.length]} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -269,14 +279,14 @@ export default function Dashboard() {
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={topCampaignsByEngagement} layout="vertical" margin={{ left: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#C2E1DF" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis type="number" stroke="#6B7280" fontSize={11} />
                   <YAxis type="category" dataKey="name" stroke="#6B7280" fontSize={11} width={120} />
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(11,63,191,0.05)" }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="views" fill="#066A67" name="Views" radius={[0, 6, 6, 0]} />
-                  <Bar dataKey="likes" fill="#457B79" name="Likes" radius={[0, 6, 6, 0]} />
-                  <Bar dataKey="comments" fill="#90C1BE" name="Comments" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="views" fill="#0B3FBF" name="Views" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="likes" fill="#144DDB" name="Likes" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="comments" fill="#6B8AE8" name="Comments" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}

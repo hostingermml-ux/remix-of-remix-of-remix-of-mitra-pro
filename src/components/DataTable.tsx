@@ -46,32 +46,47 @@ export function DataTable<T extends { id: string }>({
   const start = (currentPage - 1) * pageSize;
   const paged = filtered.slice(start, start + pageSize);
 
+  const pageNumbers = useMemo(() => {
+    const out: (number | "…")[] = [];
+    const add = (n: number) => out.push(n);
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) add(i);
+    } else {
+      add(1);
+      if (currentPage > 3) out.push("…");
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) add(i);
+      if (currentPage < totalPages - 2) out.push("…");
+      add(totalPages);
+    }
+    return out;
+  }, [currentPage, totalPages]);
+
   return (
-    <div className="glass rounded-2xl overflow-hidden">
+    <div className="glass overflow-hidden">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-white/40">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border/70">
         <div className="flex items-center gap-3">
-          {title && <h3 className="font-display text-teal-dark text-[15px]">{title}</h3>}
-          <span className="text-[11px] font-sans text-[#6B7280] bg-white/60 border border-teal-light/40 rounded-full px-2.5 py-0.5">
-            Total <span className="font-semibold text-teal-primary">{total}</span> data
+          {title && <h3 className="font-display text-foreground text-[15px] font-semibold">{title}</h3>}
+          <span className="text-[11px] font-sans text-muted-foreground bg-white border border-border rounded-full px-2.5 py-0.5">
+            Total <span className="font-semibold text-brand-blue">{total}</span> data
           </span>
         </div>
         <div className="flex items-center gap-2">
           {searchable && (
             <div className="relative">
-              <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-teal-cadet" />
+              <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={q}
                 onChange={(e) => { setQ(e.target.value); setPage(1); }}
                 placeholder="Cari..."
-                className="h-8 pl-8 w-44 text-xs bg-white/70 border-teal-light/50 focus-visible:ring-teal-primary"
+                className="h-8 pl-8 w-44 text-xs bg-white border-border focus-visible:ring-brand-blue"
               />
             </div>
           )}
           <select
             value={pageSize}
             onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-            className="h-8 text-xs rounded-md border border-teal-light/50 bg-white/70 px-2 text-teal-dark focus:outline-none focus:ring-2 focus:ring-teal-primary/40"
+            className="h-8 text-xs rounded-md border border-border bg-white px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue/40"
             aria-label="Jumlah per halaman"
           >
             {[5, 10, 25, 50, 100].map((n) => (
@@ -82,16 +97,16 @@ export function DataTable<T extends { id: string }>({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-white/60">
         <table className="w-full text-xs">
           <thead>
-            <tr className="bg-gradient-to-r from-teal-pale/70 via-white/60 to-teal-pale/70 text-left">
-              <th className="px-3 py-2.5 font-display font-semibold text-[11px] uppercase tracking-wide text-teal-dark w-12">No</th>
+            <tr className="bg-gradient-to-r from-brand-blue/[0.06] via-white to-brand-blue/[0.06] text-left">
+              <th className="px-3 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark w-12">No</th>
               {cols.map((c) => (
                 <th
                   key={c.key}
                   className={cn(
-                    "px-4 py-2.5 font-display font-semibold text-[11px] uppercase tracking-wide text-teal-dark",
+                    "px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark",
                     c.className
                   )}
                 >
@@ -104,9 +119,9 @@ export function DataTable<T extends { id: string }>({
             {paged.length === 0 ? (
               <tr>
                 <td colSpan={cols.length + 1} className="px-4 py-12 text-center">
-                  <div className="flex flex-col items-center gap-2 text-[#6B7280]">
-                    <div className="h-12 w-12 rounded-full bg-teal-pale/60 border border-teal-light/40 flex items-center justify-center">
-                      <Inbox className="h-5 w-5 text-teal-cadet" />
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <div className="h-12 w-12 rounded-full bg-brand-blue/5 border border-brand-blue/20 flex items-center justify-center">
+                      <Inbox className="h-5 w-5 text-brand-blue" />
                     </div>
                     <span className="text-xs">{empty}</span>
                   </div>
@@ -116,13 +131,13 @@ export function DataTable<T extends { id: string }>({
               paged.map((r, i) => (
                 <tr
                   key={r.id}
-                  className="border-t border-teal-light/30 hover:bg-teal-pale/40 transition-colors"
+                  className="border-t border-border/70 hover:bg-brand-blue/[0.04] transition-colors"
                 >
-                  <td className="px-3 py-2.5 align-middle text-[11px] text-[#6B7280] font-medium">
+                  <td className="px-3 py-2.5 align-middle text-[11px] text-muted-foreground font-medium">
                     {start + i + 1}
                   </td>
                   {cols.map((c) => (
-                    <td key={c.key} className={cn("px-4 py-2.5 align-middle text-[#1F2937]", c.className)}>
+                    <td key={c.key} className={cn("px-4 py-2.5 align-middle text-foreground font-sans", c.className)}>
                       {c.render ? c.render(r) : (r as any)[c.key]}
                     </td>
                   ))}
@@ -134,13 +149,14 @@ export function DataTable<T extends { id: string }>({
       </div>
 
       {/* Pagination footer */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-white/40 bg-white/40">
-        <div className="text-[11px] text-[#6B7280] font-sans">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-border/70 bg-white/70">
+        <div className="text-[11px] text-muted-foreground font-sans">
           Menampilkan{" "}
-          <span className="font-semibold text-teal-dark">
+          <span className="font-semibold text-foreground">
             {total === 0 ? 0 : start + 1}–{Math.min(start + pageSize, total)}
           </span>{" "}
-          dari <span className="font-semibold text-teal-dark">{total}</span> data
+          dari <span className="font-semibold text-foreground">{total}</span> data
+          <span className="hidden sm:inline"> · {pageSize} per halaman</span>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -149,21 +165,36 @@ export function DataTable<T extends { id: string }>({
             variant="outline"
             disabled={currentPage === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="h-7 px-2 border-teal-light/50 text-teal-dark hover:bg-teal-pale/60 disabled:opacity-40"
+            className="h-7 px-2 border-border text-foreground hover:bg-brand-blue/5 hover:text-brand-blue disabled:opacity-40"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             <span className="ml-1 text-[11px]">Prev</span>
           </Button>
-          <div className="px-2 text-[11px] font-sans text-teal-dark">
-            Hal <span className="font-semibold text-teal-primary">{currentPage}</span> / {totalPages}
-          </div>
+          {pageNumbers.map((n, idx) =>
+            n === "…" ? (
+              <span key={`e${idx}`} className="px-1 text-[11px] text-muted-foreground">…</span>
+            ) : (
+              <button
+                key={n}
+                onClick={() => setPage(n)}
+                className={cn(
+                  "h-7 min-w-[28px] px-2 rounded-md text-[11px] font-semibold font-sans border transition-colors",
+                  n === currentPage
+                    ? "bg-brand-blue text-white border-brand-blue shadow-sm"
+                    : "bg-white text-foreground border-border hover:bg-brand-blue/5 hover:text-brand-blue"
+                )}
+              >
+                {n}
+              </button>
+            )
+          )}
           <Button
             type="button"
             size="sm"
             variant="outline"
             disabled={currentPage === totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="h-7 px-2 border-teal-light/50 text-teal-dark hover:bg-teal-pale/60 disabled:opacity-40"
+            className="h-7 px-2 border-border text-foreground hover:bg-brand-blue/5 hover:text-brand-blue disabled:opacity-40"
           >
             <span className="mr-1 text-[11px]">Next</span>
             <ChevronRight className="h-3.5 w-3.5" />

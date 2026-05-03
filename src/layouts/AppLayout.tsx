@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, UserCog, ShieldCheck, Building2, Megaphone, Send, CheckSquare,
-  Radio, FileBarChart, Wallet, LogOut, ChevronLeft, ChevronRight, UserCircle2, Sparkles,
+  Radio, FileBarChart, Wallet, LogOut, ChevronLeft, ChevronRight, UserCircle2, Sparkles, Bell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -52,23 +52,27 @@ export default function AppLayout() {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Sidebar */}
+      {/* Sidebar — premium dark blue */}
       <aside
         className={cn(
-          "glass-strong sticky top-0 h-screen shrink-0 transition-all duration-300 flex flex-col border-r border-white/40",
-          collapsed ? "w-16" : "w-60"
+          "sticky top-0 h-screen shrink-0 transition-all duration-300 flex flex-col text-white",
+          collapsed ? "w-16" : "w-64"
         )}
+        style={{
+          background: "linear-gradient(180deg, #062A80 0%, #0B3FBF 100%)",
+          boxShadow: "8px 0 32px rgba(6, 42, 128, 0.18)",
+        }}
       >
-        <div className="flex items-center gap-2.5 px-3 h-16 border-b border-teal-light/30">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-teal-primary to-teal-dark shrink-0 shadow-md flex items-center justify-center">
+        <div className="flex items-center gap-2.5 px-4 h-16 border-b border-white/10">
+          <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shrink-0 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           {!collapsed && (
             <div className="leading-tight">
-              <div className="font-display font-semibold text-[15px] text-teal-dark">
-                Afiliasi<span className="text-teal-primary">Hub</span>
+              <div className="font-display font-bold text-[16px] tracking-tight text-white">
+                Afiliasi<span className="text-brand-red">Hub</span>
               </div>
-              <div className="text-[10px] text-[#6B7280] capitalize font-sans">{user.role} panel</div>
+              <div className="text-[10px] text-white/60 capitalize font-sans">{user.role} panel</div>
             </div>
           )}
         </div>
@@ -77,7 +81,7 @@ export default function AppLayout() {
           {menu.map((m: any, i) =>
             m.section ? (
               !collapsed && (
-                <div key={i} className="px-2 pt-3 pb-1 text-[10px] uppercase tracking-wider text-[#6B7280] font-display font-semibold">
+                <div key={i} className="px-2 pt-4 pb-1.5 text-[10px] uppercase tracking-[0.12em] text-white/45 font-display font-semibold">
                   {m.section}
                 </div>
               )
@@ -88,30 +92,37 @@ export default function AppLayout() {
                 end={m.end}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] transition-all font-sans",
+                    "relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium transition-all",
                     isActive
-                      ? "bg-gradient-to-r from-teal-primary to-teal-cadet text-white shadow-md shadow-teal-primary/25"
-                      : "text-teal-dark hover:bg-teal-pale/60"
+                      ? "bg-white text-brand-blue-dark shadow-[0_8px_20px_rgba(0,0,0,0.18)]"
+                      : "text-white/85 hover:bg-white/10 hover:text-white"
                   )
                 }
                 title={m.label}
               >
-                <m.icon className="h-4 w-4 shrink-0" />
-                {!collapsed && <span className="truncate font-medium">{m.label}</span>}
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-brand-red" />
+                    )}
+                    <m.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-brand-blue" : "")} />
+                    {!collapsed && <span className="truncate">{m.label}</span>}
+                  </>
+                )}
               </NavLink>
             )
           )}
         </nav>
 
-        <div className="p-2 border-t border-teal-light/30 space-y-1">
+        <div className="p-2 border-t border-white/10 space-y-1">
           <NavLink
             to="/app/profile"
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-medium",
+                "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium",
                 isActive
-                  ? "bg-gradient-to-r from-teal-primary to-teal-cadet text-white"
-                  : "text-teal-dark hover:bg-teal-pale/60"
+                  ? "bg-white text-brand-blue-dark"
+                  : "text-white/85 hover:bg-white/10"
               )
             }
           >
@@ -120,7 +131,7 @@ export default function AppLayout() {
           </NavLink>
           <button
             onClick={() => { logout(); nav("/login"); }}
-            className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] text-teal-dark hover:bg-teal-pale/80 font-medium border border-transparent hover:border-teal-cadet/30"
+            className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium text-white/85 hover:bg-brand-red/90 hover:text-white transition-colors"
           >
             <LogOut className="h-4 w-4" />
             {!collapsed && <span>Keluar</span>}
@@ -130,29 +141,36 @@ export default function AppLayout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="glass-soft sticky top-0 z-10 h-14 flex items-center px-4 gap-3 border-b border-white/40">
+        <header className="glass-soft sticky top-0 z-10 h-14 flex items-center px-4 gap-3 border-b border-border/70">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-teal-dark hover:bg-teal-pale/60"
+            className="h-8 w-8 text-foreground hover:bg-brand-blue/5 hover:text-brand-blue"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
-          <div className="text-xs text-[#6B7280] font-sans">
-            Halo, <span className="font-semibold text-teal-dark">{user.name}</span>
+          <div className="text-xs text-muted-foreground font-sans">
+            Halo, <span className="font-semibold text-foreground font-display">{user.name}</span>
           </div>
-          <div className="ml-auto flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-pale/60 border border-teal-light/40 text-[10.5px] font-sans text-teal-dark capitalize">
-              <span className="h-1.5 w-1.5 rounded-full bg-teal-primary" />
+          <div className="ml-auto flex items-center gap-2.5">
+            <button className="relative h-8 w-8 rounded-full bg-white border border-border flex items-center justify-center text-foreground hover:text-brand-blue hover:border-brand-blue/40 transition">
+              <Bell className="h-4 w-4" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-brand-red ring-2 ring-white" />
+            </button>
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-blue/8 border border-brand-blue/20 text-[10.5px] font-sans text-brand-blue-dark capitalize font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
               {user.role}
             </div>
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-teal-primary to-teal-dark text-white flex items-center justify-center text-xs font-display font-semibold shadow-md">
+            <div
+              className="h-8 w-8 rounded-full text-white flex items-center justify-center text-xs font-display font-bold shadow-md"
+              style={{ background: "linear-gradient(135deg, #0B3FBF 0%, #144DDB 100%)" }}
+            >
               {user.name.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
-        <main className="flex-1 p-5 lg:p-6 overflow-x-auto">
+        <main className="flex-1 p-5 lg:p-7 overflow-x-auto">
           <Outlet />
         </main>
       </div>
