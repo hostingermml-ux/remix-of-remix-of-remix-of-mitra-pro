@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Plus, Pencil, Trash2, FileBarChart, Send, Download } from "lucide-react";
 import { toast } from "sonner";
 
-const empty = { name: "", sow: "", reward: "", deadline: "", reportColumns: "Nama,Link Konten,Views,Note", status: "AKTIF" };
+const empty = { name: "", sow: "", reward: "", nilaiChallenge: 0, deadline: "", reportColumns: "Nama,Link Konten,Views,Note", status: "AKTIF" };
 
 export default function ChallengePage() {
   const { user } = useAuth();
@@ -42,6 +42,14 @@ export default function ChallengePage() {
     if (!user) return;
     if (apps.find((a) => a.challengeId === challengeId && a.affiliateId === user.affiliateId)) {
       return toast.error("Sudah mendaftar challenge ini");
+    }
+    // Single-active rule: cannot join if already on another active challenge (PENDING or DITERIMA)
+    const activeOther = apps.find((a) => a.affiliateId === user.affiliateId
+      && ["PENDING", "DITERIMA"].includes(a.status)
+      && rows.find((c) => c.id === a.challengeId && c.status === "AKTIF"));
+    if (activeOther) {
+      const other = rows.find((c) => c.id === activeOther.challengeId);
+      return toast.error(`Anda sedang mengikuti challenge aktif: "${other?.name}". Selesaikan dulu sebelum daftar challenge lain.`);
     }
     persistApps([...apps, {
       id: uid("ca_"), challengeId, affiliateId: user.affiliateId,
@@ -98,6 +106,7 @@ export default function ChallengePage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label className="text-xs">Reward</Label><Input value={form.reward} onChange={(e) => setForm({ ...form, reward: e.target.value })} /></div>
                   <div><Label className="text-xs">Deadline</Label><Input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div>
+                  <div className="col-span-2"><Label className="text-xs">Nilai Challenge (IDR)</Label><Input type="number" min="0" value={form.nilaiChallenge || 0} onChange={(e) => setForm({ ...form, nilaiChallenge: Number(e.target.value) })} /></div>
                 </div>
                 <div>
                   <Label className="text-xs">Kolom Report (pisahkan dengan koma)</Label>
@@ -122,7 +131,7 @@ export default function ChallengePage() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <h3 className="font-display font-semibold text-foreground">{c.name}</h3>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">Reward: {c.reward || "-"} · Deadline: {c.deadline || "-"}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">Reward: {c.reward || "-"} · Nilai: Rp {(c.nilaiChallenge || 0).toLocaleString("id-ID")} · Deadline: {c.deadline || "-"}</div>
                 </div>
                 <StatusBadge status={c.status} />
               </div>
