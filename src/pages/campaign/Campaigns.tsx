@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-const empty = { code: "", name: "", customerId: "", startDate: "", endDate: "", status: "NEW", waLink: "", description: "" };
+const empty = { code: "", name: "", customerId: "", startDate: "", endDate: "", status: "NEW", waLink: "", description: "", targetAff: 0, actualAff: 0 };
 
 export default function CampaignsPage() {
   const [rows, setRows] = useState<any[]>(load(KEYS.campaigns, []));
@@ -62,6 +62,8 @@ export default function CampaignsPage() {
                     <SelectContent>{STATUS_CAMPAIGN.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
+                <div><Label className="text-xs">Target Jumlah Aff</Label><Input type="number" min="0" value={form.targetAff} onChange={(e) => setForm({ ...form, targetAff: Number(e.target.value) })} /></div>
+                <div><Label className="text-xs">Aktual Jumlah Aff Join</Label><Input type="number" min="0" value={form.actualAff} onChange={(e) => setForm({ ...form, actualAff: Number(e.target.value) })} /></div>
                 <div className="col-span-2"><Label className="text-xs">Link Grup WA</Label><Input value={form.waLink} onChange={(e) => setForm({ ...form, waLink: e.target.value })} placeholder="https://chat.whatsapp.com/..." /></div>
                 <div className="col-span-2"><Label className="text-xs">Deskripsi</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
                 <DialogFooter className="col-span-2"><Button type="submit" className="bg-teal-primary hover:bg-teal-dark text-white">Simpan</Button></DialogFooter>
@@ -78,6 +80,12 @@ export default function CampaignsPage() {
           { key: "name", label: "Nama" },
           { key: "customer", label: "Customer", render: (r) => customers.find((c) => c.id === r.customerId)?.name || "-" },
           { key: "period", label: "Periode", render: (r) => `${r.startDate} → ${r.endDate}` },
+          { key: "target", label: "Target Aff", render: (r) => r.targetAff || 0 },
+          { key: "actual", label: "Aktual Aff", render: (r) => {
+            const blasts = load<any[]>(KEYS.blasts, []);
+            const auto = blasts.filter((b) => b.campaignId === r.id && b.status === "DITERIMA").length;
+            return r.actualAff || auto;
+          } },
           { key: "status", label: "Status", render: (r) => <StatusBadge status={r.status} /> },
           {
             key: "act", label: "Aksi", render: (r) => (
