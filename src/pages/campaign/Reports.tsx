@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Check, X } from "lucide-react";
+import { Plus, Check, X, Download } from "lucide-react";
 import { toast } from "sonner";
 
 const empty = { campaignId: "", views: 0, likes: 0, comments: 0, contentLink: "", notes: "" };
@@ -83,37 +83,61 @@ export default function ReportsPage() {
     toast.success("Dikembalikan ke affiliate untuk revisi");
   };
 
+  const downloadCsv = () => {
+    const header = ["Kampanye", "Affiliate", "Views", "Likes", "Comments", "Link Konten", "Status", "Catatan"];
+    const data = visible.map((r) => [
+      campaigns.find((c) => c.id === r.campaignId)?.name || "-",
+      r.affiliateName || "-",
+      r.views, r.likes, r.comments,
+      r.contentLink || "", r.status, r.notes || "",
+    ]);
+    const csv = [header, ...data].map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `report-campaign-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Report diunduh");
+  };
+
   return (
     <div>
       <PageHeader
         title="Report Campaign"
         subtitle={user?.role === "admin" ? "Tinjau laporan affiliate" : "Kirim laporan performa Anda"}
-        actions={user?.role === "affiliate" && (
-          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setForm(empty); }}>
-            <DialogTrigger asChild><Button className="bg-teal-primary hover:bg-teal-dark text-white"><Plus className="h-4 w-4 mr-1" />Kirim Laporan</Button></DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>{form.id ? "Revisi" : "Kirim"} Laporan</DialogTitle></DialogHeader>
-              <form onSubmit={submit} className="space-y-3">
-                <div>
-                  <Label className="text-xs">Kampanye</Label>
-                  <Select value={form.campaignId} onValueChange={(v) => setForm({ ...form, campaignId: v })}>
-                    <SelectTrigger><SelectValue placeholder="Pilih" /></SelectTrigger>
-                    <SelectContent>{myCampaigns.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <div><Label className="text-xs">Views</Label><Input type="number" min="0" required value={form.views} onChange={(e) => setForm({ ...form, views: e.target.value })} /></div>
-                  <div><Label className="text-xs">Likes</Label><Input type="number" min="0" required value={form.likes} onChange={(e) => setForm({ ...form, likes: e.target.value })} /></div>
-                  <div><Label className="text-xs">Comments</Label><Input type="number" min="0" required value={form.comments} onChange={(e) => setForm({ ...form, comments: e.target.value })} /></div>
-                </div>
-                <div><Label className="text-xs">Link Konten</Label><Input required value={form.contentLink} onChange={(e) => setForm({ ...form, contentLink: e.target.value })} placeholder="https://..." /></div>
-                <div><Label className="text-xs">Catatan</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
-                {form.adminNote && <div className="text-[11px] bg-teal-pale/60 text-teal-dark border border-teal-cadet/40 rounded p-2">Catatan admin: {form.adminNote}</div>}
-                <DialogFooter><Button type="submit" className="bg-teal-primary hover:bg-teal-dark text-white">Kirim</Button></DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        )}
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={downloadCsv} className="border-brand-blue/40 text-brand-blue hover:bg-brand-blue/5">
+              <Download className="h-4 w-4 mr-1" />Excel / Spreadsheet
+            </Button>
+            {user?.role === "affiliate" && (
+              <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setForm(empty); }}>
+                <DialogTrigger asChild><Button className="bg-brand-blue hover:bg-brand-blue-dark text-white"><Plus className="h-4 w-4 mr-1" />Kirim Laporan</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>{form.id ? "Revisi" : "Kirim"} Laporan</DialogTitle></DialogHeader>
+                  <form onSubmit={submit} className="space-y-3">
+                    <div>
+                      <Label className="text-xs">Kampanye</Label>
+                      <Select value={form.campaignId} onValueChange={(v) => setForm({ ...form, campaignId: v })}>
+                        <SelectTrigger><SelectValue placeholder="Pilih" /></SelectTrigger>
+                        <SelectContent>{myCampaigns.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div><Label className="text-xs">Views</Label><Input type="number" min="0" required value={form.views} onChange={(e) => setForm({ ...form, views: e.target.value })} /></div>
+                      <div><Label className="text-xs">Likes</Label><Input type="number" min="0" required value={form.likes} onChange={(e) => setForm({ ...form, likes: e.target.value })} /></div>
+                      <div><Label className="text-xs">Comments</Label><Input type="number" min="0" required value={form.comments} onChange={(e) => setForm({ ...form, comments: e.target.value })} /></div>
+                    </div>
+                    <div><Label className="text-xs">Link Konten</Label><Input required value={form.contentLink} onChange={(e) => setForm({ ...form, contentLink: e.target.value })} placeholder="https://..." /></div>
+                    <div><Label className="text-xs">Catatan</Label><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
+                    {form.adminNote && <div className="text-[11px] bg-brand-blue/10 text-brand-blue-dark border border-brand-blue/30 rounded p-2">Catatan admin: {form.adminNote}</div>}
+                    <DialogFooter><Button type="submit" className="bg-brand-blue hover:bg-brand-blue-dark text-white">Kirim</Button></DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        }
       />
 
       <DataTable

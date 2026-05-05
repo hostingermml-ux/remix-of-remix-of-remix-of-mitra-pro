@@ -23,9 +23,49 @@ export const KEYS = {
   customers: "af_customers",
   permissions: "af_permissions",
   campaigns: "af_campaigns",
-  blasts: "af_blasts", // affiliate applications per campaign
+  blasts: "af_blasts",
   reports: "af_reports",
   payments: "af_payments",
+  // new
+  screening: "af_screening",
+  referrals: "af_referrals",
+  paymentReferrals: "af_payment_referrals",
+  challenges: "af_challenges",
+  challengeApps: "af_challenge_apps",
+  staffPerms: "af_staff_perms", // per-user admin/staff overrides
+};
+
+const ADMIN_DEFAULT = {
+  dashboard: true,
+  staff: true,
+  affiliates: true,
+  customers: true,
+  permissions: true,
+  screening: true,
+  acceptReject: true,
+  referrals: true,
+  campaigns: true,
+  blast: true,
+  approval: true,
+  running: true,
+  reports: true,
+  payments: true,
+  paymentReferrals: true,
+  challenge: true,
+};
+const AFFILIATE_DEFAULT = {
+  dashboard: true,
+  blast: true,
+  running: true,
+  reports: true,
+  payments: true,
+  challenge: true,
+};
+const REFERRAL_DEFAULT = {
+  dashboard: true,
+  screening: true,        // their own submissions
+  affiliates: true,       // approved view (read-only)
+  paymentReferrals: true, // their payments
 };
 
 // Ensure default admin exists so first login works
@@ -44,32 +84,17 @@ export function ensureDefaultAdmin() {
     });
     save(KEYS.users, users);
   }
+  // merge perms so new menus appear without wiping user customisations
   const perms = load<any>(KEYS.permissions, null);
-  if (!perms) {
-    save(KEYS.permissions, {
-      admin: {
-        dashboard: true,
-        staff: true,
-        affiliates: true,
-        customers: true,
-        permissions: true,
-        campaigns: true,
-        blast: true,
-        approval: true,
-        running: true,
-        reports: true,
-        payments: true,
-      },
-      affiliate: {
-        dashboard: true,
-        blast: true,
-        running: true,
-        reports: true,
-        payments: true,
-      },
-    });
-  }
+  const next = {
+    admin: { ...ADMIN_DEFAULT, ...(perms?.admin || {}) },
+    affiliate: { ...AFFILIATE_DEFAULT, ...(perms?.affiliate || {}) },
+    referral: { ...REFERRAL_DEFAULT, ...(perms?.referral || {}) },
+  };
+  save(KEYS.permissions, next);
 }
 
 export const STATUS_CAMPAIGN = ["NEW", "RUNNING", "CANCEL", "DONE", "PROSES"] as const;
 export type CampaignStatus = typeof STATUS_CAMPAIGN[number];
+
+export const SCREENING_STATUS = ["PENDING", "DITERIMA", "DITOLAK"] as const;
