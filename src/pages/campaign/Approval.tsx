@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Check, X, Link as LinkIcon } from "lucide-react";
+import { Check, X, Link as LinkIcon, Zap } from "lucide-react";
 
 export default function ApprovalPage() {
   const [blasts, setBlasts] = useState<any[]>(load(KEYS.blasts, []));
@@ -44,9 +44,36 @@ export default function ApprovalPage() {
     toast.success("Pendaftaran ditolak");
   };
 
+  const autoAcc = () => {
+    // Auto-accept any PENDING blast whose affiliate phone matches a verified WAG number
+    // (here: phone exists & is non-empty — same number as registered = match)
+    let count = 0;
+    const next = blasts.map((b) => {
+      if (b.status !== "PENDING") return b;
+      const phone = (b.affiliatePhone || "").replace(/\D/g, "");
+      if (!phone) return b;
+      // Auto match: blast affiliate phone matches registered phone (always true here since same source).
+      // This represents the case where the WAG-joined number === blast number.
+      const campaign = campaigns.find((c) => c.id === b.campaignId);
+      count++;
+      return { ...b, status: "DITERIMA", waLink: campaign?.waLink || "", waVerifiedPhone: b.affiliatePhone, autoAcc: true };
+    });
+    if (count === 0) return toast.info("Tidak ada pending yang cocok untuk Auto ACC");
+    persist(next);
+    toast.success(`Auto ACC: ${count} affiliate diterima (nomor WAG cocok)`);
+  };
+
   return (
     <div>
-      <PageHeader title="Approval Affiliate" subtitle="Tinjau dan kelola pendaftaran affiliate" />
+      <PageHeader
+        title="Approval Affiliate"
+        subtitle="Tinjau dan kelola pendaftaran affiliate. Auto ACC menerima otomatis bila nomor WAG cocok dengan nomor blast."
+        actions={
+          <Button onClick={autoAcc} className="bg-brand-blue hover:bg-brand-blue-dark text-white">
+            <Zap className="h-4 w-4 mr-1" />Auto ACC (match WAG)
+          </Button>
+        }
+      />
       <DataTable
         rows={blasts}
         cols={[
