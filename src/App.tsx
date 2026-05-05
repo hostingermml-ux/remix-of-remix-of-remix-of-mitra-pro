@@ -27,6 +27,8 @@ import Reports from "./pages/campaign/Reports.tsx";
 import Payments from "./pages/Payments.tsx";
 import PaymentReferral from "./pages/PaymentReferral.tsx";
 import Challenge from "./pages/Challenge.tsx";
+import ChallengeWinners from "./pages/ChallengeWinners.tsx";
+import PaymentChallenges from "./pages/PaymentChallenges.tsx";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +69,8 @@ const App = () => (
               <Route path="payments" element={<Payments />} />
               <Route path="payment-referrals" element={<PaymentReferral />} />
               <Route path="challenge" element={<Challenge />} />
+              <Route path="challenge-winners" element={<RequireAdmin><ChallengeWinners /></RequireAdmin>} />
+              <Route path="payment-challenges" element={<RequireAdmin><PaymentChallenges /></RequireAdmin>} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
