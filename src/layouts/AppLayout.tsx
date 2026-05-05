@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, UserCog, ShieldCheck, Building2, Megaphone, Send, CheckSquare,
   Radio, FileBarChart, Wallet, LogOut, ChevronLeft, ChevronRight, UserCircle2, Sparkles, Bell,
+  UserCheck, UserPlus, Trophy, HandCoins,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,10 @@ const ADMIN_MENU = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, key: "dashboard", end: true },
   { section: "Master Data" },
   { to: "/app/staff", label: "Staff", icon: UserCog, key: "staff" },
+  { to: "/app/screening", label: "Data Screening Affiliate", icon: UserPlus, key: "screening" },
+  { to: "/app/accept-reject", label: "Accept/Reject Affiliate", icon: UserCheck, key: "acceptReject" },
   { to: "/app/affiliates", label: "Data Affiliate", icon: Users, key: "affiliates" },
+  { to: "/app/referrals", label: "Referral", icon: HandCoins, key: "referrals" },
   { to: "/app/customers", label: "Customer", icon: Building2, key: "customers" },
   { to: "/app/permissions", label: "Hak Akses", icon: ShieldCheck, key: "permissions" },
   { section: "Campaign" },
@@ -24,6 +28,9 @@ const ADMIN_MENU = [
   { to: "/app/reports", label: "Report Campaign", icon: FileBarChart, key: "reports" },
   { section: "Pembayaran" },
   { to: "/app/payments", label: "Payment Affiliate", icon: Wallet, key: "payments" },
+  { to: "/app/payment-referrals", label: "Payment Referral", icon: Wallet, key: "paymentReferrals" },
+  { section: "Challenge" },
+  { to: "/app/challenge", label: "Challenge", icon: Trophy, key: "challenge" },
 ];
 
 const AFFILIATE_MENU = [
@@ -34,6 +41,17 @@ const AFFILIATE_MENU = [
   { to: "/app/reports", label: "Report Saya", icon: FileBarChart, key: "reports" },
   { section: "Pembayaran" },
   { to: "/app/payments", label: "Pembayaran", icon: Wallet, key: "payments" },
+  { section: "Challenge" },
+  { to: "/app/challenge", label: "Challenge", icon: Trophy, key: "challenge" },
+];
+
+const REFERRAL_MENU = [
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, key: "dashboard", end: true },
+  { section: "Affiliate" },
+  { to: "/app/screening", label: "Data Screening", icon: UserPlus, key: "screening" },
+  { to: "/app/affiliates", label: "Affiliate Disetujui", icon: Users, key: "affiliates" },
+  { section: "Pembayaran" },
+  { to: "/app/payment-referrals", label: "Payment Referral", icon: Wallet, key: "paymentReferrals" },
 ];
 
 export default function AppLayout() {
@@ -47,12 +65,15 @@ export default function AppLayout() {
   }
 
   const perms = load<any>(KEYS.permissions, {});
-  const allow = perms[user.role] || {};
-  const menu = (user.role === "admin" ? ADMIN_MENU : AFFILIATE_MENU).filter((m: any) => m.section || allow[m.key]);
+  const staffPerms = load<any>(KEYS.staffPerms, {});
+  let allow = perms[user.role] || {};
+  if (user.role === "admin" && staffPerms[user.id]) allow = staffPerms[user.id];
+
+  const menuSrc = user.role === "admin" ? ADMIN_MENU : user.role === "referral" ? REFERRAL_MENU : AFFILIATE_MENU;
+  const menu = menuSrc.filter((m: any) => m.section || allow[m.key]);
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Sidebar — premium dark blue */}
       <aside
         className={cn(
           "sticky top-0 h-screen shrink-0 transition-all duration-300 flex flex-col text-white",
@@ -120,9 +141,7 @@ export default function AppLayout() {
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium",
-                isActive
-                  ? "bg-white text-brand-blue-dark"
-                  : "text-white/85 hover:bg-white/10"
+                isActive ? "bg-white text-brand-blue-dark" : "text-white/85 hover:bg-white/10"
               )
             }
           >
@@ -139,7 +158,6 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="glass-soft sticky top-0 z-10 h-14 flex items-center px-4 gap-3 border-b border-border/70">
           <Button

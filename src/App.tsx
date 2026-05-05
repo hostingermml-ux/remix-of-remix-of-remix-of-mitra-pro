@@ -16,12 +16,17 @@ import Staff from "./pages/master/Staff.tsx";
 import Affiliates from "./pages/master/Affiliates.tsx";
 import Customers from "./pages/master/Customers.tsx";
 import Permissions from "./pages/master/Permissions.tsx";
+import Screening from "./pages/master/Screening.tsx";
+import AcceptReject from "./pages/master/AcceptReject.tsx";
+import Referrals from "./pages/master/Referrals.tsx";
 import Campaigns from "./pages/campaign/Campaigns.tsx";
 import Blast from "./pages/campaign/Blast.tsx";
 import Approval from "./pages/campaign/Approval.tsx";
 import Running from "./pages/campaign/Running.tsx";
 import Reports from "./pages/campaign/Reports.tsx";
 import Payments from "./pages/Payments.tsx";
+import PaymentReferral from "./pages/PaymentReferral.tsx";
+import Challenge from "./pages/Challenge.tsx";
 
 const queryClient = new QueryClient();
 
@@ -48,7 +53,10 @@ const App = () => (
               <Route index element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="staff" element={<RequireAdmin><Staff /></RequireAdmin>} />
-              <Route path="affiliates" element={<RequireAdmin><Affiliates /></RequireAdmin>} />
+              <Route path="affiliates" element={<Affiliates />} />
+              <Route path="screening" element={<Screening />} />
+              <Route path="accept-reject" element={<RequireAdmin><AcceptReject /></RequireAdmin>} />
+              <Route path="referrals" element={<RequireAdmin><Referrals /></RequireAdmin>} />
               <Route path="customers" element={<RequireAdmin><Customers /></RequireAdmin>} />
               <Route path="permissions" element={<RequireAdmin><Permissions /></RequireAdmin>} />
               <Route path="campaigns" element={<RequireAdmin><Campaigns /></RequireAdmin>} />
@@ -57,6 +65,8 @@ const App = () => (
               <Route path="running" element={<Running />} />
               <Route path="reports" element={<Reports />} />
               <Route path="payments" element={<Payments />} />
+              <Route path="payment-referrals" element={<PaymentReferral />} />
+              <Route path="challenge" element={<Challenge />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
