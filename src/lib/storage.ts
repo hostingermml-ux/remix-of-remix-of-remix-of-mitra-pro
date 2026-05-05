@@ -54,6 +54,8 @@ const ADMIN_DEFAULT = {
   payments: true,
   paymentReferrals: true,
   challenge: true,
+  challengeWinners: true,
+  paymentChallenges: true,
 };
 const AFFILIATE_DEFAULT = {
   dashboard: true,
