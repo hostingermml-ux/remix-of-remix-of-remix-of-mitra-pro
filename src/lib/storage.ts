@@ -32,6 +32,8 @@ export const KEYS = {
   paymentReferrals: "af_payment_referrals",
   challenges: "af_challenges",
   challengeApps: "af_challenge_apps",
+  challengeWinners: "af_challenge_winners",
+  paymentChallenges: "af_payment_challenges",
   staffPerms: "af_staff_perms", // per-user admin/staff overrides
 };
 
@@ -52,6 +54,8 @@ const ADMIN_DEFAULT = {
   payments: true,
   paymentReferrals: true,
   challenge: true,
+  challengeWinners: true,
+  paymentChallenges: true,
 };
 const AFFILIATE_DEFAULT = {
   dashboard: true,

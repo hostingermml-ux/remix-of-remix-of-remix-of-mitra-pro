@@ -14,6 +14,7 @@ import { toast } from "sonner";
 const empty = {
   name: "", phone: "", email: "", fiacNo: "", socialMedia: "",
   bankNo: "", bankName: "", ownerName: "", city: "", referralName: "",
+  followers: 0, followersUpdatedAt: "",
   status: "Aktif",
 };
 
@@ -62,6 +63,8 @@ export default function AffiliatesPage() {
                 <div><Label className="text-xs">Nama Bank</Label><Input value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} /></div>
                 <div><Label className="text-xs">No Rekening</Label><Input value={form.bankNo} onChange={(e) => setForm({ ...form, bankNo: e.target.value })} /></div>
                 <div className="col-span-2"><Label className="text-xs">Nama Pemilik Rekening</Label><Input value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} /></div>
+                <div><Label className="text-xs">Jumlah Followers</Label><Input type="number" min="0" value={form.followers || 0} onChange={(e) => setForm({ ...form, followers: Number(e.target.value), followersUpdatedAt: new Date().toISOString().slice(0,10) })} /></div>
+                <div><Label className="text-xs">Tanggal Update Followers</Label><Input type="date" value={form.followersUpdatedAt || ""} onChange={(e) => setForm({ ...form, followersUpdatedAt: e.target.value })} /></div>
                 <div>
                   <Label className="text-xs">Nama Referral</Label>
                   <Select value={form.referralName || "__none"} onValueChange={(v) => setForm({ ...form, referralName: v === "__none" ? "" : v })}>
@@ -94,6 +97,8 @@ export default function AffiliatesPage() {
           { key: "phone", label: "Telepon" },
           { key: "city", label: "Domisili" },
           { key: "bankName", label: "Bank" },
+          { key: "followers", label: "Followers", render: (r) => (r.followers || 0).toLocaleString("id-ID") },
+          { key: "followersUpdatedAt", label: "Tgl Update", render: (r) => r.followersUpdatedAt || "-" },
           { key: "referralName", label: "Referral", render: (r) => r.referralName || "-" },
           { key: "status", label: "Status", render: (r) => <StatusBadge status={r.status} /> },
           {
@@ -117,6 +122,8 @@ export default function AffiliatesPage() {
                 ["No Fiac", view.fiacNo], ["Nama", view.name], ["No HP", view.phone], ["Email", view.email],
                 ["Domisili", view.city], ["TikTok", view.socialMedia], ["Bank", view.bankName],
                 ["No Rekening", view.bankNo], ["Pemilik Rek", view.ownerName], ["Referral", view.referralName],
+                ["Jumlah Followers", (view.followers || 0).toLocaleString("id-ID")],
+                ["Tanggal Update", view.followersUpdatedAt || "-"],
                 ["Status", view.status],
               ].map(([k, v]) => (
                 <div key={k} className="bg-muted/30 rounded p-2">

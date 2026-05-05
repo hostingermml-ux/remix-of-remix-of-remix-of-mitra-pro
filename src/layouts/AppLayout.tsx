@@ -32,6 +32,8 @@ const ADMIN_MENU = [
   { to: "/app/payment-referrals", label: "Payment Referral", icon: Wallet, key: "paymentReferrals" },
   { section: "Challenge" },
   { to: "/app/challenge", label: "Challenge", icon: Trophy, key: "challenge" },
+  { to: "/app/challenge-winners", label: "Pilih Pemenang", icon: Trophy, key: "challengeWinners" },
+  { to: "/app/payment-challenges", label: "Payment Challenge", icon: Wallet, key: "paymentChallenges" },
 ];
 
 const AFFILIATE_MENU = [
