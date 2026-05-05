@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-const empty = { code: "", name: "", customerId: "", startDate: "", endDate: "", status: "NEW", waLink: "", description: "", targetAff: 0, actualAff: 0 };
+const empty = { code: "", name: "", customerId: "", startDate: "", endDate: "", status: "NEW", waLink: "", description: "", targetAff: 0, actualAff: 0, budget: 0, realisasiBudget: 0 };
 
 export default function CampaignsPage() {
   const [rows, setRows] = useState<any[]>(load(KEYS.campaigns, []));
@@ -64,6 +64,8 @@ export default function CampaignsPage() {
                 </div>
                 <div><Label className="text-xs">Target Jumlah Aff</Label><Input type="number" min="0" value={form.targetAff} onChange={(e) => setForm({ ...form, targetAff: Number(e.target.value) })} /></div>
                 <div><Label className="text-xs">Aktual Jumlah Aff Join</Label><Input type="number" min="0" value={form.actualAff} onChange={(e) => setForm({ ...form, actualAff: Number(e.target.value) })} /></div>
+                <div><Label className="text-xs">Budget (IDR)</Label><Input type="number" min="0" value={form.budget || 0} onChange={(e) => setForm({ ...form, budget: Number(e.target.value) })} /></div>
+                <div><Label className="text-xs">Realisasi Budget (IDR)</Label><Input type="number" min="0" value={form.realisasiBudget || 0} onChange={(e) => setForm({ ...form, realisasiBudget: Number(e.target.value) })} /></div>
                 <div className="col-span-2"><Label className="text-xs">Link Grup WA</Label><Input value={form.waLink} onChange={(e) => setForm({ ...form, waLink: e.target.value })} placeholder="https://chat.whatsapp.com/..." /></div>
                 <div className="col-span-2"><Label className="text-xs">Deskripsi</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
                 <DialogFooter className="col-span-2"><Button type="submit" className="bg-teal-primary hover:bg-teal-dark text-white">Simpan</Button></DialogFooter>
@@ -86,6 +88,8 @@ export default function CampaignsPage() {
             const auto = blasts.filter((b) => b.campaignId === r.id && b.status === "DITERIMA").length;
             return r.actualAff || auto;
           } },
+          { key: "budget", label: "Budget", render: (r) => "Rp " + (r.budget || 0).toLocaleString("id-ID") },
+          { key: "realisasi", label: "Realisasi", render: (r) => "Rp " + (r.realisasiBudget || 0).toLocaleString("id-ID") },
           { key: "status", label: "Status", render: (r) => <StatusBadge status={r.status} /> },
           {
             key: "act", label: "Aksi", render: (r) => (
