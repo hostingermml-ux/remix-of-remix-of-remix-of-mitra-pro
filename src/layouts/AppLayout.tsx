@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { load, KEYS } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
+import BackupControls from "@/components/BackupControls";
 
 const ADMIN_MENU = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, key: "dashboard", end: true },
@@ -172,6 +173,7 @@ export default function AppLayout() {
             Halo, <span className="font-semibold text-foreground font-display">{user.name}</span>
           </div>
           <div className="ml-auto flex items-center gap-2.5">
+            <BackupControls />
             <button className="relative h-8 w-8 rounded-full bg-white border border-border flex items-center justify-center text-foreground hover:text-brand-blue hover:border-brand-blue/40 transition">
               <Bell className="h-4 w-4" />
               <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-brand-red ring-2 ring-white" />
