@@ -3,6 +3,7 @@ import { KEYS, load, save, uid } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Send, CheckCircle2 } from "lucide-react";
@@ -91,6 +92,21 @@ export default function BlastPage() {
           })}
         </div>
       )}
+
+      <div className="mt-6">
+        <h3 className="font-display text-foreground text-[15px] font-semibold mb-2">Database Blast Campaign</h3>
+        <DataTable
+          rows={(user?.role === "admin" ? blasts : blasts.filter((b) => b.affiliateId === user?.affiliateId)).map((b: any) => ({ ...b }))}
+          cols={[
+            { key: "campaign", label: "Kampanye", render: (r: any) => campaigns.find((c) => c.id === r.campaignId)?.name || "-" },
+            { key: "affiliateName", label: "Affiliate" },
+            { key: "affiliatePhone", label: "No HP" },
+            { key: "appliedAt", label: "Tgl Daftar", render: (r: any) => r.appliedAt ? new Date(r.appliedAt).toLocaleDateString("id-ID") : "-" },
+            { key: "status", label: "Status", render: (r: any) => <StatusBadge status={r.status} /> },
+          ]}
+          empty="Belum ada blast campaign."
+        />
+      </div>
     </div>
   );
 }
