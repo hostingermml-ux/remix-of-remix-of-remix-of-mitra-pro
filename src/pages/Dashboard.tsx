@@ -12,8 +12,8 @@ import {
   AreaChart, Area, Legend,
 } from "recharts";
 
-const BRAND = ["#0B3FBF", "#062A80", "#144DDB", "#6B8AE8", "#B8C8F2"];
-const BRAND_RED = "#E60000";
+const BRAND = ["#050505", "#151515", "#F5C400", "#FFE100", "#FFF4A3"];
+const BRAND_RED = "#F5C400";
 
 function StatCard({ label, value, icon: Icon, hint }: any) {
   return (
@@ -182,7 +182,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div
           className="relative overflow-hidden rounded-2xl p-5 text-white"
-          style={{ background: "linear-gradient(135deg, #062A80 0%, #0B3FBF 100%)", boxShadow: "0 18px 40px rgba(11,63,191,0.22)" }}
+          style={{ background: "linear-gradient(135deg, #151515 0%, #050505 100%)", boxShadow: "0 18px 40px rgba(5,5,5,0.28)" }}
         >
           <div className="relative z-10 flex items-center justify-between">
             <div>
@@ -219,12 +219,12 @@ export default function Dashboard() {
               <AreaChart data={trend}>
                 <defs>
                   <linearGradient id="gReports" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0B3FBF" stopOpacity={0.45} />
-                    <stop offset="100%" stopColor="#0B3FBF" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#050505" stopOpacity={0.45} />
+                    <stop offset="100%" stopColor="#050505" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gPay" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#144DDB" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#144DDB" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#F5C400" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#F5C400" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -232,8 +232,8 @@ export default function Dashboard() {
                 <YAxis stroke="#6B7280" fontSize={11} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11, color: "#111827" }} />
-                <Area type="monotone" dataKey="reports" name="Laporan" stroke="#0B3FBF" fill="url(#gReports)" strokeWidth={2.5} />
-                <Area type="monotone" dataKey="payments" name="Pembayaran" stroke="#144DDB" fill="url(#gPay)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="reports" name="Laporan" stroke="#050505" fill="url(#gReports)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="payments" name="Pembayaran" stroke="#F5C400" fill="url(#gPay)" strokeWidth={2.5} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -279,7 +279,7 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#6B7280" fontSize={11} />
                   <YAxis stroke="#6B7280" fontSize={11} allowDecimals={false} />
-                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(11,63,191,0.05)" }} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(255,225,0,0.10)" }} />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                     {campaignByStatus.map((entry, i) => (
                       <Cell key={i} fill={entry.name === "CANCEL" ? BRAND_RED : BRAND[i % BRAND.length]} />
@@ -299,11 +299,11 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis type="number" stroke="#6B7280" fontSize={11} />
                   <YAxis type="category" dataKey="name" stroke="#6B7280" fontSize={11} width={120} />
-                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(11,63,191,0.05)" }} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(255,225,0,0.10)" }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="views" fill="#0B3FBF" name="Views" radius={[0, 6, 6, 0]} />
-                  <Bar dataKey="likes" fill="#144DDB" name="Likes" radius={[0, 6, 6, 0]} />
-                  <Bar dataKey="comments" fill="#6B8AE8" name="Comments" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="views" fill="#050505" name="Views" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="likes" fill="#F5C400" name="Likes" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="comments" fill="#FFE100" name="Comments" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
