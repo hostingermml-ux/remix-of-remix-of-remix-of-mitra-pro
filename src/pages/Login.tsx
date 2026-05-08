@@ -9,11 +9,12 @@ import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 
 export default function Login() {
-  const { loginAdmin, loginAffiliate, loginReferral } = useAuth();
+  const { loginAdmin, loginAffiliate, loginReferral, loginCustomer } = useAuth();
   const nav = useNavigate();
   const [admin, setAdmin] = useState({ username: "", password: "" });
   const [aff, setAff] = useState({ fiacNo: "", phone: "" });
   const [ref, setRef] = useState({ username: "", password: "" });
+  const [cust, setCust] = useState({ username: "", password: "" });
 
   const submitAdmin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +34,12 @@ export default function Login() {
     if (err) return toast.error(err);
     toast.success("Berhasil masuk"); nav("/app");
   };
+  const submitCust = (e: React.FormEvent) => {
+    e.preventDefault();
+    const err = loginCustomer(cust.username, cust.password);
+    if (err) return toast.error(err);
+    toast.success("Selamat datang"); nav("/app");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -50,10 +57,11 @@ export default function Login() {
 
         <div className="glass rounded-2xl p-6">
           <Tabs defaultValue="admin">
-            <TabsList className="grid grid-cols-3 w-full bg-muted/50">
+            <TabsList className="grid grid-cols-4 w-full bg-muted/50">
               <TabsTrigger value="admin">Admin</TabsTrigger>
               <TabsTrigger value="affiliate">Affiliate</TabsTrigger>
               <TabsTrigger value="referral">Referral</TabsTrigger>
+              <TabsTrigger value="customer">Customer</TabsTrigger>
             </TabsList>
 
             <TabsContent value="admin" className="mt-4">
