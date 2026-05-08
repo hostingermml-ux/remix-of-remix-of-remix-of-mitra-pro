@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, UserCog, ShieldCheck, Building2, Megaphone, Send, CheckSquare,
   Radio, FileBarChart, Wallet, LogOut, ChevronLeft, ChevronRight, UserCircle2, Sparkles, Bell,
-  UserCheck, UserPlus, Trophy, HandCoins,
+  UserCheck, UserPlus, Trophy, HandCoins, Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -57,6 +57,15 @@ const REFERRAL_MENU = [
   { to: "/app/payment-referrals", label: "Payment Referral", icon: Wallet, key: "paymentReferrals" },
 ];
 
+const CUSTOMER_MENU = [
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, key: "dashboard", end: true },
+  { section: "Operasional" },
+  { to: "/app/customer/campaigns", label: "Campaign Saya", icon: Megaphone, key: "customerCampaigns" },
+  { to: "/app/customer/affiliates", label: "Affiliate Aktif", icon: Users, key: "customerAffiliates" },
+  { to: "/app/customer/reports", label: "Report Campaign", icon: FileBarChart, key: "customerReports" },
+  { to: "/app/customer/challenges", label: "Challenge", icon: Trophy, key: "customerChallenges" },
+];
+
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
@@ -72,7 +81,11 @@ export default function AppLayout() {
   let allow = perms[user.role] || {};
   if (user.role === "admin" && staffPerms[user.id]) allow = staffPerms[user.id];
 
-  const menuSrc = user.role === "admin" ? ADMIN_MENU : user.role === "referral" ? REFERRAL_MENU : AFFILIATE_MENU;
+  const menuSrc =
+    user.role === "admin" ? ADMIN_MENU :
+    user.role === "referral" ? REFERRAL_MENU :
+    user.role === "customer" ? CUSTOMER_MENU :
+    AFFILIATE_MENU;
   const menu = menuSrc.filter((m: any) => m.section || allow[m.key]);
 
   return (
