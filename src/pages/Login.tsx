@@ -88,6 +88,15 @@ export default function Login() {
                 <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white">Masuk sebagai Referral</Button>
               </form>
             </TabsContent>
+
+            <TabsContent value="customer" className="mt-4">
+              <form onSubmit={submitCust} className="space-y-3">
+                <div><Label className="text-xs">Username</Label><Input value={cust.username} onChange={(e) => setCust({ ...cust, username: e.target.value })} required /></div>
+                <div><Label className="text-xs">Password</Label><Input type="password" value={cust.password} onChange={(e) => setCust({ ...cust, password: e.target.value })} required /></div>
+                <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white">Masuk sebagai Customer</Button>
+                <p className="text-[11px] text-center text-[#6B7280]">Login dibuat oleh admin</p>
+              </form>
+            </TabsContent>
           </Tabs>
 
           <div className="mt-5 pt-4 border-t border-border text-center text-xs text-muted-foreground">
