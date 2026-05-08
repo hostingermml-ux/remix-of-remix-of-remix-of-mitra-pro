@@ -177,7 +177,8 @@ export default function Dashboard() {
         <StatCard label="Total Comments" value={totalEngagement.comments.toLocaleString("id-ID")} icon={MessageCircle} />
       </div>
 
-      {/* Payment summary cards */}
+      {/* Payment summary cards (hidden for customer) */}
+      {!isCustomer && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div
           className="relative overflow-hidden rounded-2xl p-5 text-white"
@@ -206,6 +207,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
