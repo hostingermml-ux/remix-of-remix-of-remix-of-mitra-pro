@@ -154,6 +154,13 @@ export default function Dashboard() {
           <StatCard label="Laporan" value={reports.length} icon={FileBarChart} hint={`${reports.filter((r) => r.status === "PENDING").length} pending`} />
           <StatCard label="Pembayaran" value={payments.length} icon={Wallet} hint={`${payments.filter((p) => p.status === "DIBAYAR").length} dibayar`} />
         </div>
+      ) : isCustomer ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard label="Campaign Saya" value={campaigns.length} icon={Megaphone} hint={`${campaigns.filter((c) => c.status === "RUNNING").length} berjalan`} />
+          <StatCard label="Affiliate Aktif" value={new Set(blasts.filter(b => b.status === "DITERIMA").map(b => b.affiliateId)).size} icon={Users} />
+          <StatCard label="Total Laporan" value={reports.length} icon={FileBarChart} />
+          <StatCard label="Selesai" value={campaigns.filter((c) => c.status === "DONE").length} icon={CheckCircle2} />
+        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard label="Aplikasi Saya" value={myApplications.length} icon={Megaphone} />
