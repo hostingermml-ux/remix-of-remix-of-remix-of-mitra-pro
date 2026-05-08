@@ -9,19 +9,30 @@ import { toast } from "sonner";
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
-  const [form, setForm] = useState<any>({ name: "", password: "", socialMedia: "", phone: "", email: "", bankName: "", bankNo: "" });
+  const [form, setForm] = useState<any>({ name: "", password: "", socialMedia: "", phone: "", email: "", bankName: "", bankNo: "", address: "", picName: "", picPhone: "" });
 
   useEffect(() => {
     if (!user) return;
-    const users = load<any[]>(KEYS.users, []);
-    const u = users.find((x) => x.id === user.id);
-    if (u) setForm({ ...form, ...u, password: "" });
+    if (user.role === "customer") {
+      const customers = load<any[]>(KEYS.customers, []);
+      const c = customers.find((x) => x.id === user.customerId);
+      if (c) setForm((f: any) => ({ ...f, ...c, password: "" }));
+    } else {
+      const users = load<any[]>(KEYS.users, []);
+      const u = users.find((x) => x.id === user.id);
+      if (u) setForm((f: any) => ({ ...f, ...u, password: "" }));
+    }
     // eslint-disable-next-line
   }, [user]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data: any = { name: form.name, socialMedia: form.socialMedia, phone: form.phone, email: form.email, bankName: form.bankName, bankNo: form.bankNo };
+    let data: any;
+    if (user?.role === "customer") {
+      data = { name: form.name, address: form.address, picName: form.picName, picPhone: form.picPhone };
+    } else {
+      data = { name: form.name, socialMedia: form.socialMedia, phone: form.phone, email: form.email, bankName: form.bankName, bankNo: form.bankNo };
+    }
     if (form.password) data.password = form.password;
     updateProfile(data);
     toast.success("Profil diperbarui");
@@ -36,10 +47,12 @@ export default function Profile() {
             <Label className="text-xs">Nama</Label>
             <Input value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
-          <div>
-            <Label className="text-xs">Telepon</Label>
-            <Input value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-          </div>
+          {user?.role !== "customer" && (
+            <div>
+              <Label className="text-xs">Telepon</Label>
+              <Input value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </div>
+          )}
           {user?.role === "affiliate" && (
             <>
               <div>
@@ -60,12 +73,28 @@ export default function Profile() {
               </div>
             </>
           )}
+          {user?.role === "customer" && (
+            <>
+              <div className="sm:col-span-2">
+                <Label className="text-xs">Alamat</Label>
+                <Input value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Nama PIC</Label>
+                <Input value={form.picName || ""} onChange={(e) => setForm({ ...form, picName: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Telepon PIC</Label>
+                <Input value={form.picPhone || ""} onChange={(e) => setForm({ ...form, picPhone: e.target.value })} />
+              </div>
+            </>
+          )}
           <div className="sm:col-span-2">
-            <Label className="text-xs">Password Baru (kosongkan jika tidak diubah)</Label>
+            <Label className="text-xs">{user?.role === "customer" ? "Ubah Password (kosongkan jika tidak diubah)" : "Password Baru (kosongkan jika tidak diubah)"}</Label>
             <Input type="password" value={form.password || ""} onChange={(e) => setForm({ ...form, password: e.target.value })} />
           </div>
         </div>
-        <Button type="submit" className="bg-teal-primary hover:bg-teal-dark text-white">Simpan Perubahan</Button>
+        <Button type="submit" className="bg-brand-blue hover:bg-brand-blue-dark text-white">Simpan Perubahan</Button>
       </form>
     </div>
   );
