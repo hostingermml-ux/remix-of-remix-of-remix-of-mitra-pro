@@ -56,16 +56,24 @@ export default function Dashboard() {
   const staff = load<any[]>(KEYS.staff, []);
   const affiliates = load<any[]>(KEYS.affiliates, []);
   const customers = load<any[]>(KEYS.customers, []);
-  const campaigns = load<any[]>(KEYS.campaigns, []);
-  const reports = load<any[]>(KEYS.reports, []);
-  const payments = load<any[]>(KEYS.payments, []);
-  const blasts = load<any[]>(KEYS.blasts, []);
+  const campaignsAll = load<any[]>(KEYS.campaigns, []);
+  const reportsAll = load<any[]>(KEYS.reports, []);
+  const paymentsAll = load<any[]>(KEYS.payments, []);
+  const blastsAll = load<any[]>(KEYS.blasts, []);
 
   const isAdmin = user?.role === "admin";
+  const isCustomer = user?.role === "customer";
 
-  const myApplications = !isAdmin ? blasts.filter((b) => b.affiliateId === user?.affiliateId) : [];
-  const myReports = !isAdmin ? reports.filter((r) => r.affiliateId === user?.affiliateId) : [];
-  const myPayments = !isAdmin ? payments.filter((p) => p.affiliateId === user?.affiliateId) : [];
+  // Customer scope: only their data, no finance
+  const customerCampaignIds = isCustomer ? new Set(campaignsAll.filter((c) => c.customerId === user?.customerId).map((c) => c.id)) : new Set<string>();
+  const campaigns = isCustomer ? campaignsAll.filter((c) => customerCampaignIds.has(c.id)) : campaignsAll;
+  const reports = isCustomer ? reportsAll.filter((r) => customerCampaignIds.has(r.campaignId)) : reportsAll;
+  const payments = isCustomer ? [] : paymentsAll;
+  const blasts = isCustomer ? blastsAll.filter((b) => customerCampaignIds.has(b.campaignId)) : blastsAll;
+
+  const myApplications = !isAdmin && !isCustomer ? blasts.filter((b) => b.affiliateId === user?.affiliateId) : [];
+  const myReports = !isAdmin && !isCustomer ? reports.filter((r) => r.affiliateId === user?.affiliateId) : [];
+  const myPayments = !isAdmin && !isCustomer ? payments.filter((p) => p.affiliateId === user?.affiliateId) : [];
 
   // Aggregations
   const campaignByStatus = useMemo(() => {
