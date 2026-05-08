@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { KEYS, load, save, ensureDefaultAdmin } from "./storage";
 
-export type Role = "admin" | "affiliate" | "referral";
+export type Role = "admin" | "affiliate" | "referral" | "customer";
 export interface SessionUser {
   id: string;
   role: Role;
@@ -9,6 +9,7 @@ export interface SessionUser {
   username?: string;
   affiliateId?: string;
   referralId?: string;
+  customerId?: string;
 }
 
 interface AuthCtx {
@@ -16,6 +17,7 @@ interface AuthCtx {
   loginAdmin: (username: string, password: string) => string | null;
   loginAffiliate: (affiliateId: string, phone: string) => string | null;
   loginReferral: (username: string, password: string) => string | null;
+  loginCustomer: (username: string, password: string) => string | null;
   signup: (data: any) => string | null;
   logout: () => void;
   updateProfile: (data: any) => void;
@@ -74,27 +76,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null;
   };
 
+  const loginCustomer = (username: string, password: string) => {
+    const accs = load<any[]>(KEYS.customerAccounts, []);
+    const a = accs.find((x) => x.username === username && x.password === password);
+    if (!a) return "Username atau password salah";
+    const customers = load<any[]>(KEYS.customers, []);
+    const c = customers.find((x) => x.id === a.customerId);
+    if (!c) return "Data customer tidak ditemukan";
+    if (c.status && c.status !== "Aktif") return "Akun customer tidak aktif";
+    persist({ id: a.id, role: "customer", name: c.name, username: a.username, customerId: c.id });
+    return null;
+  };
+
   const signup = (data: any) => {
-    const users = load<any[]>(KEYS.users, []);
-    if (data.role === "admin") {
-      if (users.find((u) => u.username === data.username)) return "Username sudah dipakai";
-      users.push({ ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() });
-      save(KEYS.users, users);
-      return null;
-    }
-    if (data.role === "referral") {
-      const refs = load<any[]>(KEYS.referrals, []);
-      if (refs.find((r) => r.username === data.username)) return "Username sudah dipakai";
-      const r = {
-        id: crypto.randomUUID(),
-        name: data.name, username: data.username, password: data.password,
-        phone: data.phone || "", email: data.email || "",
-        status: "Aktif", createdAt: new Date().toISOString(),
-      };
-      refs.push(r); save(KEYS.referrals, refs);
-      return null;
-    }
-    // affiliate signup -> goes to SCREENING (not direct affiliate anymore)
+    // Public signup is restricted to AFFILIATE only.
+    if (data.role !== "affiliate") return "Pendaftaran publik hanya untuk Affiliate";
     const screening = load<any[]>(KEYS.screening, []);
     if (screening.find((a) => a.phone === data.phone)) return "Nomor telepon sudah terdaftar";
     const fiacNo = "FIAC" + String(screening.length + 1).padStart(4, "0");
@@ -116,6 +112,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = (data: any) => {
     if (!user) return;
+    if (user.role === "customer") {
+      const accs = load<any[]>(KEYS.customerAccounts, []);
+      const ai = accs.findIndex((a) => a.id === user.id);
+      if (ai >= 0) {
+        accs[ai] = { ...accs[ai], ...(data.password ? { password: data.password } : {}) };
+        save(KEYS.customerAccounts, accs);
+      }
+      const customers = load<any[]>(KEYS.customers, []);
+      const ci = customers.findIndex((c) => c.id === user.customerId);
+      if (ci >= 0) {
+        const { password, ...rest } = data;
+        customers[ci] = { ...customers[ci], ...rest };
+        save(KEYS.customers, customers);
+      }
+      return;
+    }
     const users = load<any[]>(KEYS.users, []);
     const idx = users.findIndex((u) => u.id === user.id);
     if (idx >= 0) { users[idx] = { ...users[idx], ...data }; save(KEYS.users, users); }
@@ -131,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  return <Ctx.Provider value={{ user, loginAdmin, loginAffiliate, loginReferral, signup, logout, updateProfile }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ user, loginAdmin, loginAffiliate, loginReferral, loginCustomer, signup, logout, updateProfile }}>{children}</Ctx.Provider>;
 }
 
 export const useAuth = () => {

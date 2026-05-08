@@ -65,7 +65,7 @@ export default function CampaignsPage() {
                 <div><Label className="text-xs">Target Jumlah Aff</Label><Input type="number" min="0" value={form.targetAff} onChange={(e) => setForm({ ...form, targetAff: Number(e.target.value) })} /></div>
                 <div><Label className="text-xs">Aktual Jumlah Aff Join</Label><Input type="number" min="0" value={form.actualAff} onChange={(e) => setForm({ ...form, actualAff: Number(e.target.value) })} /></div>
                 <div><Label className="text-xs">Budget (IDR)</Label><Input type="number" min="0" value={form.budget || 0} onChange={(e) => setForm({ ...form, budget: Number(e.target.value) })} /></div>
-                <div><Label className="text-xs">Realisasi Budget (IDR)</Label><Input type="number" min="0" value={form.realisasiBudget || 0} onChange={(e) => setForm({ ...form, realisasiBudget: Number(e.target.value) })} /></div>
+                <div><Label className="text-xs">Realisasi (otomatis dari Payment Affiliate)</Label><Input disabled value="Dihitung otomatis" /></div>
                 <div className="col-span-2"><Label className="text-xs">Link Grup WA</Label><Input value={form.waLink} onChange={(e) => setForm({ ...form, waLink: e.target.value })} placeholder="https://chat.whatsapp.com/..." /></div>
                 <div className="col-span-2"><Label className="text-xs">Deskripsi</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
                 <DialogFooter className="col-span-2"><Button type="submit" className="bg-teal-primary hover:bg-teal-dark text-white">Simpan</Button></DialogFooter>
@@ -88,8 +88,13 @@ export default function CampaignsPage() {
             const auto = blasts.filter((b) => b.campaignId === r.id && b.status === "DITERIMA").length;
             return r.actualAff || auto;
           } },
-          { key: "budget", label: "Budget", render: (r) => "Rp " + (r.budget || 0).toLocaleString("id-ID") },
-          { key: "realisasi", label: "Realisasi", render: (r) => "Rp " + (r.realisasiBudget || 0).toLocaleString("id-ID") },
+          { key: "budget", label: "Budget", render: (r) => "Rp" + (r.budget || 0).toLocaleString("id-ID") },
+          { key: "realisasi", label: "Realisasi", render: (r) => {
+            const payments = load<any[]>(KEYS.payments, []);
+            const realisasi = payments.filter((p) => p.campaignId === r.id).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const mismatch = (r.budget || 0) !== realisasi;
+            return <span className={mismatch ? "text-brand-red font-semibold" : "font-medium"}>{"Rp" + realisasi.toLocaleString("id-ID")}</span>;
+          } },
           { key: "status", label: "Status", render: (r) => <StatusBadge status={r.status} /> },
           {
             key: "act", label: "Aksi", render: (r) => (

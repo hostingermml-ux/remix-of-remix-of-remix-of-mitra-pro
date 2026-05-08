@@ -56,16 +56,24 @@ export default function Dashboard() {
   const staff = load<any[]>(KEYS.staff, []);
   const affiliates = load<any[]>(KEYS.affiliates, []);
   const customers = load<any[]>(KEYS.customers, []);
-  const campaigns = load<any[]>(KEYS.campaigns, []);
-  const reports = load<any[]>(KEYS.reports, []);
-  const payments = load<any[]>(KEYS.payments, []);
-  const blasts = load<any[]>(KEYS.blasts, []);
+  const campaignsAll = load<any[]>(KEYS.campaigns, []);
+  const reportsAll = load<any[]>(KEYS.reports, []);
+  const paymentsAll = load<any[]>(KEYS.payments, []);
+  const blastsAll = load<any[]>(KEYS.blasts, []);
 
   const isAdmin = user?.role === "admin";
+  const isCustomer = user?.role === "customer";
 
-  const myApplications = !isAdmin ? blasts.filter((b) => b.affiliateId === user?.affiliateId) : [];
-  const myReports = !isAdmin ? reports.filter((r) => r.affiliateId === user?.affiliateId) : [];
-  const myPayments = !isAdmin ? payments.filter((p) => p.affiliateId === user?.affiliateId) : [];
+  // Customer scope: only their data, no finance
+  const customerCampaignIds = isCustomer ? new Set(campaignsAll.filter((c) => c.customerId === user?.customerId).map((c) => c.id)) : new Set<string>();
+  const campaigns = isCustomer ? campaignsAll.filter((c) => customerCampaignIds.has(c.id)) : campaignsAll;
+  const reports = isCustomer ? reportsAll.filter((r) => customerCampaignIds.has(r.campaignId)) : reportsAll;
+  const payments = isCustomer ? [] : paymentsAll;
+  const blasts = isCustomer ? blastsAll.filter((b) => customerCampaignIds.has(b.campaignId)) : blastsAll;
+
+  const myApplications = !isAdmin && !isCustomer ? blasts.filter((b) => b.affiliateId === user?.affiliateId) : [];
+  const myReports = !isAdmin && !isCustomer ? reports.filter((r) => r.affiliateId === user?.affiliateId) : [];
+  const myPayments = !isAdmin && !isCustomer ? payments.filter((p) => p.affiliateId === user?.affiliateId) : [];
 
   // Aggregations
   const campaignByStatus = useMemo(() => {
@@ -146,6 +154,13 @@ export default function Dashboard() {
           <StatCard label="Laporan" value={reports.length} icon={FileBarChart} hint={`${reports.filter((r) => r.status === "PENDING").length} pending`} />
           <StatCard label="Pembayaran" value={payments.length} icon={Wallet} hint={`${payments.filter((p) => p.status === "DIBAYAR").length} dibayar`} />
         </div>
+      ) : isCustomer ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard label="Campaign Saya" value={campaigns.length} icon={Megaphone} hint={`${campaigns.filter((c) => c.status === "RUNNING").length} berjalan`} />
+          <StatCard label="Affiliate Aktif" value={new Set(blasts.filter(b => b.status === "DITERIMA").map(b => b.affiliateId)).size} icon={Users} />
+          <StatCard label="Total Laporan" value={reports.length} icon={FileBarChart} />
+          <StatCard label="Selesai" value={campaigns.filter((c) => c.status === "DONE").length} icon={CheckCircle2} />
+        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard label="Aplikasi Saya" value={myApplications.length} icon={Megaphone} />
@@ -162,7 +177,8 @@ export default function Dashboard() {
         <StatCard label="Total Comments" value={totalEngagement.comments.toLocaleString("id-ID")} icon={MessageCircle} />
       </div>
 
-      {/* Payment summary cards */}
+      {/* Payment summary cards (hidden for customer) */}
+      {!isCustomer && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div
           className="relative overflow-hidden rounded-2xl p-5 text-white"
@@ -191,6 +207,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
