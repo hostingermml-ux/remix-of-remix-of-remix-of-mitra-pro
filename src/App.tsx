@@ -27,7 +27,6 @@ import Reports from "./pages/campaign/Reports.tsx";
 import Payments from "./pages/Payments.tsx";
 import PaymentReferral from "./pages/PaymentReferral.tsx";
 import Challenge from "./pages/Challenge.tsx";
-import Challenge from "./pages/Challenge.tsx";
 import ChallengeWinners from "./pages/ChallengeWinners.tsx";
 import PaymentChallenges from "./pages/PaymentChallenges.tsx";
 import CustomerCampaigns from "./pages/customer/CustomerCampaigns.tsx";
