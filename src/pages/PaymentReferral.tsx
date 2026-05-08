@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { KEYS, load, save, uid } from "@/lib/storage";
+import { useMemo, useState } from "react";
+import { KEYS, load, save, uid, fmtIDR } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/PageHeader";
-import { DataTable } from "@/components/DataTable";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 const empty = { referralId: "", paymentName: "", amount: 0, proof: "", note: "", status: "BELUM DIBAYAR", paidAt: "" };
@@ -20,11 +19,16 @@ export default function PaymentReferralPage() {
   const isReferral = user?.role === "referral";
   const [rows, setRows] = useState<any[]>(load(KEYS.paymentReferrals, []));
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<any>(null);
   const [form, setForm] = useState<any>(empty);
-  const referrals = load<any[]>(KEYS.referrals, []);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  const visible = isReferral ? rows.filter((r) => r.referralId === user?.referralId) : rows;
+  const referrals = load<any[]>(KEYS.referrals, []);
+  const screening = load<any[]>(KEYS.screening, []);
+  const settings = load<any>(KEYS.settings, { referralCommission: 100000 });
+  const commission = Number(settings.referralCommission) || 0;
+
+  const visibleReferrals = isReferral ? referrals.filter((r) => r.id === user?.referralId) : referrals;
+
   const persist = (v: any[]) => { setRows(v); save(KEYS.paymentReferrals, v); };
 
   const submit = (e: React.FormEvent) => {
@@ -41,14 +45,24 @@ export default function PaymentReferralPage() {
   const edit = (r: any) => { setForm(r); setOpen(true); };
   const del = (id: string) => { if (confirm("Hapus pembayaran ini?")) persist(rows.filter((r) => r.id !== id)); };
 
-  const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n || 0);
-  const refName = (id: string) => referrals.find((r) => r.id === id)?.name || "-";
+  const stats = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const ref of referrals) {
+      const approved = screening.filter((s) => s.referralName === ref.name && s.status === "DITERIMA").length;
+      const totalPayable = approved * commission;
+      const refPayments = rows.filter((p) => p.referralId === ref.id);
+      const paid = refPayments.filter((p) => p.status === "DIBAYAR").reduce((a, b) => a + (Number(b.amount) || 0), 0);
+      const remaining = Math.max(0, totalPayable - paid);
+      map[ref.id] = { approved, totalPayable, paid, remaining, payments: refPayments };
+    }
+    return map;
+  }, [referrals, screening, rows, commission]);
 
   return (
     <div>
       <PageHeader
         title="Payment Referral"
-        subtitle={isReferral ? "Riwayat pembayaran referral Anda" : "Kelola pembayaran untuk referral"}
+        subtitle={isReferral ? "Riwayat pembayaran referral Anda" : "Otomatis dari Affiliate Disetujui × Komisi Referral"}
         actions={!isReferral && (
           <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setForm(empty); }}>
             <DialogTrigger asChild>
@@ -86,42 +100,101 @@ export default function PaymentReferralPage() {
         )}
       />
 
-      <DataTable
-        rows={visible}
-        cols={[
-          { key: "referral", label: "Referral", render: (r) => refName(r.referralId) },
-          { key: "paymentName", label: "Nama Pembayaran" },
-          { key: "amount", label: "Nilai", render: (r) => <span className="font-semibold">{fmt(r.amount)}</span> },
-          { key: "status", label: "Status", render: (r) => <StatusBadge status={r.status} /> },
-          {
-            key: "act", label: "Aksi", render: (r) => (
-              <div className="flex gap-1">
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setView(r)}><Eye className="h-3.5 w-3.5" /></Button>
-                {!isReferral && <>
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => edit(r)}><Pencil className="h-3.5 w-3.5" /></Button>
-                  <Button size="icon" variant="ghost" className="h-7 w-7 text-brand-red hover:bg-brand-red-soft" onClick={() => del(r.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
-                </>}
-              </div>
-            ),
-          },
-        ]}
-      />
+      <div className="glass overflow-hidden">
+        <div className="overflow-x-auto bg-white/60">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-gradient-to-r from-brand-blue/[0.06] via-white to-brand-blue/[0.06] text-left">
+                <th className="px-3 py-3 w-8"></th>
+                <th className="px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark">Referral</th>
+                <th className="px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark">Aff Disetujui</th>
+                <th className="px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark">Total Komisi</th>
+                <th className="px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark">Sudah Dibayar</th>
+                <th className="px-4 py-3 font-display font-semibold text-[11px] uppercase tracking-wide text-brand-blue-dark">Sisa</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleReferrals.length === 0 ? (
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Belum ada referral.</td></tr>
+              ) : visibleReferrals.map((r) => {
+                const s = stats[r.id] || { approved: 0, totalPayable: 0, paid: 0, remaining: 0, payments: [] };
+                const isOpen = expanded === r.id;
+                return (
+                  <>
+                    <tr key={r.id} className="border-t border-border/70 hover:bg-brand-blue/[0.04]">
+                      <td className="px-3 py-2.5">
+                        <button onClick={() => setExpanded(isOpen ? null : r.id)} className="text-brand-blue">
+                          {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </button>
+                      </td>
+                      <td className="px-4 py-2.5 font-medium">{r.name}</td>
+                      <td className="px-4 py-2.5">{s.approved}</td>
+                      <td className="px-4 py-2.5 font-semibold">{fmtIDR(s.totalPayable)}</td>
+                      <td className="px-4 py-2.5">{fmtIDR(s.paid)}</td>
+                      <td className={`px-4 py-2.5 font-semibold ${s.remaining > 0 ? "text-brand-red" : "text-brand-blue"}`}>{fmtIDR(s.remaining)}</td>
+                    </tr>
+                    {isOpen && (
+                      <tr className="bg-brand-blue/[0.03] border-t border-border/50">
+                        <td colSpan={6} className="px-6 py-4">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                            <Stat label="Affiliate Disetujui" value={s.approved} />
+                            <Stat label="Komisi/Aff" value={fmtIDR(commission)} />
+                            <Stat label="Total Komisi" value={fmtIDR(s.totalPayable)} color="text-brand-blue-dark" />
+                            <Stat label="Sisa Belum Dibayar" value={fmtIDR(s.remaining)} color="text-brand-red" />
+                          </div>
+                          <div className="text-[11px] text-muted-foreground mb-1.5 font-semibold">Riwayat Pembayaran</div>
+                          <div className="overflow-x-auto rounded-lg border border-border bg-white">
+                            <table className="w-full text-[11px]">
+                              <thead className="bg-muted/40">
+                                <tr>
+                                  <th className="px-3 py-2 text-left">Nama</th>
+                                  <th className="px-3 py-2 text-left">Nilai</th>
+                                  <th className="px-3 py-2 text-left">Status</th>
+                                  <th className="px-3 py-2 text-left">Tgl</th>
+                                  {!isReferral && <th className="px-3 py-2 text-left">Aksi</th>}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {s.payments.length === 0 ? (
+                                  <tr><td colSpan={5} className="px-3 py-3 text-center text-muted-foreground">Belum ada pembayaran.</td></tr>
+                                ) : s.payments.map((p: any) => (
+                                  <tr key={p.id} className="border-t border-border/60">
+                                    <td className="px-3 py-1.5">{p.paymentName}</td>
+                                    <td className="px-3 py-1.5 font-semibold">{fmtIDR(p.amount)}</td>
+                                    <td className="px-3 py-1.5"><StatusBadge status={p.status} /></td>
+                                    <td className="px-3 py-1.5">{p.paidAt || "-"}</td>
+                                    {!isReferral && (
+                                      <td className="px-3 py-1.5">
+                                        <div className="flex gap-1">
+                                          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => edit(p)}><Pencil className="h-3 w-3" /></Button>
+                                          <Button size="icon" variant="ghost" className="h-6 w-6 text-brand-red" onClick={() => del(p.id)}><Trash2 className="h-3 w-3" /></Button>
+                                        </div>
+                                      </td>
+                                    )}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-      <Dialog open={!!view} onOpenChange={(o) => !o && setView(null)}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Detail Pembayaran Referral</DialogTitle></DialogHeader>
-          {view && (
-            <div className="space-y-2 text-xs">
-              <div><b>Referral:</b> {refName(view.referralId)}</div>
-              <div><b>Nama Pembayaran:</b> {view.paymentName}</div>
-              <div><b>Nilai:</b> {fmt(view.amount)}</div>
-              <div><b>Status:</b> <StatusBadge status={view.status} /></div>
-              <div><b>Bukti:</b> {view.proof ? <a className="gradient-text font-semibold" target="_blank" rel="noreferrer" href={view.proof}>Lihat</a> : "-"}</div>
-              <div><b>Note:</b> {view.note || "-"}</div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+function Stat({ label, value, color }: { label: string; value: any; color?: string }) {
+  return (
+    <div className="bg-white rounded-lg border border-border px-3 py-2">
+      <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+      <div className={`font-display font-bold text-sm ${color || "text-foreground"}`}>{value}</div>
     </div>
   );
 }
