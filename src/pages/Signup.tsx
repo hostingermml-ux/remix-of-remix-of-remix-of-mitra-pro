@@ -10,7 +10,6 @@ import { toast } from "sonner";
 export default function Signup() {
   const { signup } = useAuth();
   const nav = useNavigate();
-  const [admin, setAdmin] = useState({ name: "", username: "", password: "", phone: "" });
   const [aff, setAff] = useState({ name: "", phone: "", email: "", socialMedia: "", bankNo: "", bankName: "" });
 
   const submitAdmin = (e: React.FormEvent) => {
