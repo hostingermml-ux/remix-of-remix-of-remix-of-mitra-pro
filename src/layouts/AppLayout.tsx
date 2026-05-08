@@ -92,24 +92,25 @@ export default function AppLayout() {
     <div className="flex min-h-screen w-full">
       <aside
         className={cn(
-          "sticky top-0 h-screen shrink-0 transition-all duration-300 flex flex-col text-white",
+          "sticky top-0 h-screen shrink-0 transition-all duration-300 flex flex-col",
           collapsed ? "w-16" : "w-64"
         )}
         style={{
-          background: "linear-gradient(180deg, #062A80 0%, #0B3FBF 100%)",
-          boxShadow: "8px 0 32px rgba(6, 42, 128, 0.18)",
+          background: "linear-gradient(180deg, #FFE100 0%, #F5C400 100%)",
+          boxShadow: "8px 0 32px rgba(5, 5, 5, 0.18)",
+          color: "#050505",
         }}
       >
-        <div className="flex items-center gap-2.5 px-4 h-16 border-b border-white/10">
-          <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shrink-0 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
+        <div className="flex items-center gap-2.5 px-4 h-16 border-b border-black/10">
+          <div className="h-9 w-9 rounded-xl bg-black/90 border border-black/20 shrink-0 flex items-center justify-center shadow-md">
+            <Sparkles className="h-4 w-4" style={{ color: "#FFE100" }} />
           </div>
           {!collapsed && (
             <div className="leading-tight">
-              <div className="font-display font-bold text-[16px] tracking-tight text-white">
-                Afiliasi<span className="text-brand-red">Hub</span>
+              <div className="font-display font-bold text-[16px] tracking-tight text-black">
+                VAPE<span className="ml-1 px-1.5 rounded bg-black text-[#FFE100]">HUB</span>
               </div>
-              <div className="text-[10px] text-white/60 capitalize font-sans">{user.role} panel</div>
+              <div className="text-[10px] text-black/60 capitalize font-sans">{user.role} panel</div>
             </div>
           )}
         </div>
@@ -118,7 +119,7 @@ export default function AppLayout() {
           {menu.map((m: any, i) =>
             m.section ? (
               !collapsed && (
-                <div key={i} className="px-2 pt-4 pb-1.5 text-[10px] uppercase tracking-[0.12em] text-white/45 font-display font-semibold">
+                <div key={i} className="px-2 pt-4 pb-1.5 text-[10px] uppercase tracking-[0.12em] text-black/55 font-display font-semibold">
                   {m.section}
                 </div>
               )
@@ -131,8 +132,8 @@ export default function AppLayout() {
                   cn(
                     "relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium transition-all",
                     isActive
-                      ? "bg-white text-brand-blue-dark shadow-[0_8px_20px_rgba(0,0,0,0.18)]"
-                      : "text-white/85 hover:bg-white/10 hover:text-white"
+                      ? "bg-black text-[#FFE100] shadow-[0_8px_20px_rgba(0,0,0,0.28)]"
+                      : "text-black/85 hover:bg-black/10 hover:text-black"
                   )
                 }
                 title={m.label}
@@ -140,9 +141,9 @@ export default function AppLayout() {
                 {({ isActive }) => (
                   <>
                     {isActive && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-brand-red" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r" style={{ background: "#FFE100" }} />
                     )}
-                    <m.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-brand-blue" : "")} />
+                    <m.icon className="h-4 w-4 shrink-0" />
                     {!collapsed && <span className="truncate">{m.label}</span>}
                   </>
                 )}
@@ -151,13 +152,13 @@ export default function AppLayout() {
           )}
         </nav>
 
-        <div className="p-2 border-t border-white/10 space-y-1">
+        <div className="p-2 border-t border-black/10 space-y-1">
           <NavLink
             to="/app/profile"
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium",
-                isActive ? "bg-white text-brand-blue-dark" : "text-white/85 hover:bg-white/10"
+                isActive ? "bg-black text-[#FFE100]" : "text-black/85 hover:bg-black/10"
               )
             }
           >
@@ -166,7 +167,7 @@ export default function AppLayout() {
           </NavLink>
           <button
             onClick={() => { logout(); nav("/login"); }}
-            className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium text-white/85 hover:bg-brand-red/90 hover:text-white transition-colors"
+            className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-sans font-medium text-black/85 hover:bg-black hover:text-[#FFE100] transition-colors"
           >
             <LogOut className="h-4 w-4" />
             {!collapsed && <span>Keluar</span>}
@@ -179,7 +180,7 @@ export default function AppLayout() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-foreground hover:bg-brand-blue/5 hover:text-brand-blue"
+            className="h-8 w-8 text-foreground hover:bg-[#FFE100]/30 hover:text-black"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -189,17 +190,19 @@ export default function AppLayout() {
           </div>
           <div className="ml-auto flex items-center gap-2.5">
             <BackupControls />
-            <button className="relative h-8 w-8 rounded-full bg-white border border-border flex items-center justify-center text-foreground hover:text-brand-blue hover:border-brand-blue/40 transition">
+            <button className="relative h-8 w-8 rounded-full bg-white border border-border flex items-center justify-center text-foreground hover:text-black hover:border-[#FFE100] transition">
               <Bell className="h-4 w-4" />
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-brand-red ring-2 ring-white" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ring-2 ring-white" style={{ background: "#FFE100" }} />
             </button>
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-blue/8 border border-brand-blue/20 text-[10.5px] font-sans text-brand-blue-dark capitalize font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10.5px] font-sans capitalize font-semibold"
+              style={{ background: "rgba(255,225,0,0.18)", borderColor: "rgba(245,196,0,0.5)", color: "#050505" }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#F5C400" }} />
               {user.role}
             </div>
             <div
-              className="h-8 w-8 rounded-full text-white flex items-center justify-center text-xs font-display font-bold shadow-md"
-              style={{ background: "linear-gradient(135deg, #0B3FBF 0%, #144DDB 100%)" }}
+              className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-display font-bold shadow-md"
+              style={{ background: "linear-gradient(135deg, #050505 0%, #2B2B2B 100%)", color: "#FFE100" }}
             >
               {user.name.charAt(0).toUpperCase()}
             </div>
