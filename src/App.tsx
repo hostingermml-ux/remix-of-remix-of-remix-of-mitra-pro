@@ -75,6 +75,10 @@ const App = () => (
               <Route path="challenge" element={<Challenge />} />
               <Route path="challenge-winners" element={<RequireAdmin><ChallengeWinners /></RequireAdmin>} />
               <Route path="payment-challenges" element={<RequireAdmin><PaymentChallenges /></RequireAdmin>} />
+              <Route path="customer/campaigns" element={<CustomerCampaigns />} />
+              <Route path="customer/reports" element={<CustomerReports />} />
+              <Route path="customer/affiliates" element={<CustomerAffiliates />} />
+              <Route path="customer/challenges" element={<CustomerChallenges />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
