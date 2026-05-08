@@ -6,91 +6,93 @@
 
 @layer base {
   :root {
-    /* ===== Brand Palette =====
-       Primary Blue   #0B3FBF   223 89% 40%
-       Deep Blue      #062A80   223 91% 26%
-       Electric Blue  #144DDB   222 84% 47%
-       Primary Red    #E60000   0 100% 45%
-       Deep Red       #B80000   0 100% 36%
-       Soft Red       #FFE5E5   0 100% 95%
-       White          #FFFFFF
-       Soft BG        #F5F7FB   220 33% 97%
-       Dark Text      #111827   220 39% 11%
-       Muted Text     #6B7280   220 9% 46%
-       Border Gray    #E5E7EB   220 13% 91%
+    /* ===== VAPE Anti Nyamuk Yellow-Black Palette =====
+       Primary Yellow  #FFE100   53 100% 50%
+       Deep Yellow     #F5C400   48 100% 48%
+       Soft Yellow     #FFF4A3   54 100% 82%
+       Black           #050505   0 0% 2%
+       Charcoal Black  #151515   0 0% 8%
+       Dark Gray       #2B2B2B   0 0% 17%
+       Medium Gray     #6B7280   220 9% 46%
+       Light Gray      #F4F4F5   240 5% 96%
+       White           #FFFFFF
     */
-    --background: 220 33% 97%;
-    --foreground: 220 39% 11%;
+    --background: 240 5% 96%;
+    --foreground: 0 0% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 39% 11%;
+    --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 39% 11%;
+    --popover-foreground: 0 0% 8%;
 
-    /* Brand */
-    --brand-blue: 223 89% 40%;
-    --brand-blue-dark: 223 91% 26%;
-    --brand-blue-electric: 222 84% 47%;
-    --brand-red: 0 100% 45%;
-    --brand-red-dark: 0 100% 36%;
-    --brand-red-soft: 0 100% 95%;
+    /* Brand — repointed: blue tokens now mean black/charcoal,
+       red tokens now mean yellow accents. Keeps existing classNames
+       working with the new visual identity. */
+    --brand-blue: 0 0% 8%;          /* Charcoal Black */
+    --brand-blue-dark: 0 0% 2%;     /* Deep Black */
+    --brand-blue-electric: 0 0% 17%; /* Dark Gray */
+    --brand-red: 53 100% 50%;       /* Primary Yellow */
+    --brand-red-dark: 48 100% 48%;  /* Deep Yellow */
+    --brand-red-soft: 54 100% 82%;  /* Soft Yellow */
 
-    /* Backward-compat aliases (teal-* now mapped to blue palette) */
     --brand-1: var(--brand-blue);
-    --brand-2: var(--brand-blue-electric);
-    --brand-3: 220 60% 86%;
+    --brand-2: 53 100% 50%;
+    --brand-3: 54 100% 82%;
 
-    --teal-primary: 223 89% 40%;
-    --teal-dark: 223 91% 26%;
-    --teal-cadet: 222 84% 47%;
-    --teal-light: 220 60% 86%;
-    --teal-pale: 220 60% 95%;
-    --teal-soft: 220 33% 97%;
+    /* Backward-compat teal-* — black + yellow scheme so existing
+       `bg-teal-primary text-white` buttons render as premium dark CTAs. */
+    --teal-primary: 0 0% 8%;
+    --teal-dark: 0 0% 2%;
+    --teal-cadet: 48 100% 48%;
+    --teal-light: 54 100% 82%;
+    --teal-pale: 54 100% 92%;
+    --teal-soft: 240 5% 96%;
 
-    --primary: 223 89% 40%;
+    --primary: 0 0% 8%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 60% 95%;
-    --secondary-foreground: 223 91% 26%;
+    --secondary: 54 100% 92%;
+    --secondary-foreground: 0 0% 8%;
 
-    --muted: 220 33% 96%;
+    --muted: 240 5% 96%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 220 60% 94%;
-    --accent-foreground: 223 91% 26%;
+    --accent: 53 100% 50%;
+    --accent-foreground: 0 0% 2%;
 
-    --destructive: 0 100% 45%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 223 89% 40%;
-    --warning: 0 100% 45%;
-    --info: 222 84% 47%;
+    --success: 142 70% 40%;
+    --warning: 48 100% 48%;
+    --info: 53 100% 50%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 88%;
-    --ring: 223 89% 40%;
+    --border: 240 6% 90%;
+    --input: 240 6% 88%;
+    --ring: 53 100% 50%;
 
     --radius: 0.9rem;
 
-    --gradient-brand: linear-gradient(135deg, #062A80 0%, #0B3FBF 55%, #E60000 100%);
-    --gradient-brand-blue: linear-gradient(135deg, #062A80 0%, #0B3FBF 60%, #144DDB 100%);
-    --gradient-soft: linear-gradient(135deg, #F5F7FB 0%, #FFFFFF 55%, #FFE5E5 100%);
-    --gradient-bg-page: #F5F7FB;
+    --gradient-brand: linear-gradient(135deg, #050505 0%, #151515 55%, #FFE100 100%);
+    --gradient-brand-blue: linear-gradient(135deg, #050505 0%, #151515 60%, #2B2B2B 100%);
+    --gradient-yellow: linear-gradient(135deg, #FFE100 0%, #F5C400 100%);
+    --gradient-soft: linear-gradient(135deg, #F4F4F5 0%, #FFFFFF 55%, #FFF4A3 100%);
+    --gradient-bg-page: #F4F4F5;
 
     --glass-bg: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(229, 231, 235, 0.8);
-    --shadow-glass: 0 18px 45px rgba(11, 63, 191, 0.10);
-    --shadow-soft: 0 8px 24px rgba(11, 63, 191, 0.07);
-    --shadow-blue: 0 10px 30px rgba(11, 63, 191, 0.18);
+    --shadow-glass: 0 18px 45px rgba(5, 5, 5, 0.10);
+    --shadow-soft: 0 8px 24px rgba(5, 5, 5, 0.06);
+    --shadow-blue: 0 10px 30px rgba(255, 225, 0, 0.28);
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 39% 11%;
-    --sidebar-primary: 223 89% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 60% 95%;
-    --sidebar-accent-foreground: 223 91% 26%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 223 89% 40%;
+    --sidebar-background: 53 100% 50%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 0 0% 2%;
+    --sidebar-primary-foreground: 53 100% 50%;
+    --sidebar-accent: 48 100% 48%;
+    --sidebar-accent-foreground: 0 0% 2%;
+    --sidebar-border: 48 100% 42%;
+    --sidebar-ring: 0 0% 2%;
   }
 }
 
@@ -102,9 +104,9 @@
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 13px;
     background:
-      radial-gradient(900px 400px at -10% -10%, rgba(11,63,191,0.06), transparent 60%),
-      radial-gradient(700px 320px at 110% 0%, rgba(230,0,0,0.04), transparent 60%),
-      #F5F7FB;
+      radial-gradient(900px 400px at -10% -10%, rgba(255,225,0,0.10), transparent 60%),
+      radial-gradient(700px 320px at 110% 0%, rgba(5,5,5,0.04), transparent 60%),
+      #F4F4F5;
     background-attachment: fixed;
   }
   h1, h2, h3, h4, h5, .font-display {
@@ -118,7 +120,7 @@
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.78);
     backdrop-filter: blur(16px) saturate(160%);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
     border: 1px solid rgba(229, 231, 235, 0.8);
@@ -126,37 +128,46 @@
     border-radius: 1rem;
   }
   .glass-soft {
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(229, 231, 235, 0.8);
     box-shadow: var(--shadow-soft);
   }
   .glass-strong {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid rgba(229, 231, 235, 0.9);
-    box-shadow: 0 12px 40px rgba(11, 63, 191, 0.10);
+    box-shadow: 0 12px 40px rgba(5, 5, 5, 0.10);
+  }
+  .glass-dark {
+    background: rgba(5, 5, 5, 0.82);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255, 225, 0, 0.18);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    color: #fff;
   }
   .gradient-text {
-    background: linear-gradient(135deg, #062A80 0%, #0B3FBF 60%, #E60000 110%);
+    background: linear-gradient(135deg, #050505 0%, #2B2B2B 50%, #F5C400 110%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .gradient-bg { background: var(--gradient-brand); }
   .gradient-bg-blue { background: var(--gradient-brand-blue); }
+  .gradient-bg-yellow { background: var(--gradient-yellow); }
   .gradient-soft-bg { background: var(--gradient-soft); }
 
-  /* Page title hero — gradient blue → red */
+  /* Page title hero — premium black with yellow accent */
   .page-hero {
     position: relative;
     overflow: hidden;
     border-radius: 1.25rem;
-    background: var(--gradient-brand);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 18px 45px rgba(11, 63, 191, 0.18);
+    background: linear-gradient(135deg, #050505 0%, #151515 60%, #2B2B2B 100%);
+    border: 1px solid rgba(255, 225, 0, 0.18);
+    box-shadow: 0 18px 45px rgba(5, 5, 5, 0.28);
     color: #fff;
   }
   .page-hero::before {
@@ -164,8 +175,8 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(700px 220px at 100% 120%, rgba(230,0,0,0.45), transparent 60%),
-      radial-gradient(500px 200px at 0% -20%, rgba(255,255,255,0.18), transparent 60%);
+      radial-gradient(700px 220px at 100% 120%, rgba(255,225,0,0.35), transparent 60%),
+      radial-gradient(500px 200px at 0% -20%, rgba(255,255,255,0.08), transparent 60%);
     pointer-events: none;
   }
   .page-hero::after {
@@ -173,27 +184,28 @@
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      linear-gradient(rgba(255,225,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,225,0,0.05) 1px, transparent 1px);
     background-size: 28px 28px;
     mask-image: radial-gradient(circle at 80% 50%, #000 30%, transparent 75%);
     pointer-events: none;
     opacity: 0.6;
   }
 
-  /* Branded primary button utility */
+  /* Branded primary button — yellow with black text */
   .btn-brand {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all;
-    background: linear-gradient(135deg, #0B3FBF 0%, #144DDB 100%);
-    box-shadow: 0 6px 18px rgba(11, 63, 191, 0.28);
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all;
+    background: linear-gradient(135deg, #FFE100 0%, #F5C400 100%);
+    color: #050505;
+    box-shadow: 0 6px 18px rgba(245, 196, 0, 0.32);
     font-family: 'Montserrat', sans-serif;
   }
-  .btn-brand:hover { background: linear-gradient(135deg, #062A80 0%, #0B3FBF 100%); }
+  .btn-brand:hover { background: linear-gradient(135deg, #F5C400 0%, #FFE100 100%); }
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all;
-    background: #E60000;
-    box-shadow: 0 6px 18px rgba(230, 0, 0, 0.22);
+    background: #050505;
+    box-shadow: 0 6px 18px rgba(5, 5, 5, 0.28);
     font-family: 'Montserrat', sans-serif;
   }
-  .btn-danger:hover { background: #B80000; }
+  .btn-danger:hover { background: #151515; }
 }
