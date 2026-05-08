@@ -40,14 +40,21 @@ const REFERRAL_MENUS = [
   { key: "affiliates", label: "Affiliate Disetujui" },
   { key: "paymentReferrals", label: "Payment Referral" },
 ];
+const CUSTOMER_MENUS = [
+  { key: "dashboard", label: "Dashboard" },
+  { key: "customerCampaigns", label: "Campaign Saya" },
+  { key: "customerAffiliates", label: "Affiliate Aktif" },
+  { key: "customerReports", label: "Report Campaign" },
+  { key: "customerChallenges", label: "Challenge" },
+];
 
 export default function PermissionsPage() {
-  const [perms, setPerms] = useState<any>(load(KEYS.permissions, { admin: {}, affiliate: {}, referral: {} }));
+  const [perms, setPerms] = useState<any>(load(KEYS.permissions, { admin: {}, affiliate: {}, referral: {}, customer: {} }));
   const [staffPerms, setStaffPerms] = useState<any>(load(KEYS.staffPerms, {}));
   const staff = load<any[]>(KEYS.staff, []);
   const [selectedStaff, setSelectedStaff] = useState<string>("");
 
-  const toggle = (role: "admin" | "affiliate" | "referral", key: string) => {
+  const toggle = (role: "admin" | "affiliate" | "referral" | "customer", key: string) => {
     setPerms({ ...perms, [role]: { ...perms[role], [key]: !perms[role]?.[key] } });
   };
   const toggleStaff = (key: string) => {
@@ -72,11 +79,12 @@ export default function PermissionsPage() {
           <TabsTrigger value="staff">Per Staff (Admin)</TabsTrigger>
         </TabsList>
         <TabsContent value="role" className="mt-4">
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
             {[
               { role: "admin" as const, title: "Admin", menus: ADMIN_MENUS },
               { role: "affiliate" as const, title: "Affiliate", menus: AFFILIATE_MENUS },
               { role: "referral" as const, title: "Referral", menus: REFERRAL_MENUS },
+              { role: "customer" as const, title: "Customer", menus: CUSTOMER_MENUS },
             ].map((g) => (
               <div key={g.role} className="glass rounded-2xl p-5">
                 <h3 className="mb-3 gradient-text font-display font-semibold">{g.title}</h3>
